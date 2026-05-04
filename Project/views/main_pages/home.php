@@ -114,15 +114,15 @@
                 <div class="footer-section">
                     <h4>For Clients</h4>
                     <ul>
-                        <li><a href="../../views/Client/client-dashboard.php">Post a Project</a></li>
-                        <li><a href="#">Browse Specialists</a></li>
+                        <li><a href="../../Auth/login.php">Post a Project</a></li>
+                        <li><a href="../../Auth/login.php">Browse Specialists</a></li>
                         <li><a href="#">Pricing</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>For Freelancers</h4>
                     <ul>
-                        <li><a href="../../views/Freelancer/freelancer-dashboard.php">Find Work</a></li>
+                        <li><a href="../../Auth/login.php">Find Work</a></li>
                         <li><a href="#">Get Verified</a></li>
                         <li><a href="#">Resources</a></li>
                     </ul>
