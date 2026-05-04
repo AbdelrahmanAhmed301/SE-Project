@@ -121,23 +121,23 @@
                     <ul>
                         <li><a href="about.html">About Us</a></li>
                         <li><a href="#">How It Works</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="../../views/main_pages/Contact.php">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>For Clients</h4>
                     <ul>
-                        <li><a href="client.html">Post a Project</a></li>
-                        <li><a href="#">Browse Specialists</a></li>
-                        <li><a href="#">Pricing</a></li>
+                        <li><a href="../../views/Auth/login.php">Post a Project</a></li>
+                        <li><a href="../../views/Auth/login.php">Browse Specialists</a></li>
+                        <li><a href="../../views/Auth/login.php">Pricing</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>For Freelancers</h4>
                     <ul>
-                        <li><a href="freelancer.html">Find Work</a></li>
-                        <li><a href="#">Get Verified</a></li>
-                        <li><a href="#">Resources</a></li>
+                        <li><a href="../../views/Auth/login.php">Find Work</a></li>
+                        <li><a href="../../views/Auth/login.php">Get Verified</a></li>
+                        <li><a href="../../views/Auth/login.php">Resources</a></li>
                     </ul>
                 </div>
             </div>
