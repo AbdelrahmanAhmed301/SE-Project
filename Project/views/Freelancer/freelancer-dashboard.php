@@ -29,7 +29,7 @@ $current_user = $user_info[0] ?? null;
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <div class="logo">Work<span>Nest</span></div>
+  <div class="logo">Worklio<span></span></div>
 
   <nav>
     <div class="nav-group">
