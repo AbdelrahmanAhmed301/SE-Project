@@ -121,7 +121,7 @@
                     <ul>
                         <li><a href="about.html">About Us</a></li>
                         <li><a href="#">How It Works</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="../../views/main_pages/Contact.php">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -137,7 +137,11 @@
                     <ul>
                         <li><a href="../../views/Auth/login.php">Find Work</a></li>
                         <li><a href="../../views/Auth/login.php">Get Verified</a></li>
+<<<<<<< HEAD
                         <li><a href="">Resources</a></li>
+=======
+                        <li><a href="../../views/Auth/login.php">Resources</a></li>
+>>>>>>> 15d11acaaa26c4811bd4336aeb768ce03a9ba2c8
                     </ul>
                 </div>
             </div>
