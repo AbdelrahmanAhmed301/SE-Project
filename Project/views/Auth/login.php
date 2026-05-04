@@ -73,7 +73,7 @@ if(isset($_POST['email']) && isset($_POST['password'])){
 
     <form action="login.php" method="post">
       <div class="field">
-        <label for="email">Email</label>
+        <label for="email">email</label>
         <input id="email" name="email" type="email" placeholder="Email address"/>
       </div>
 
@@ -85,7 +85,7 @@ if(isset($_POST['email']) && isset($_POST['password'])){
       <div class="options">
         <label class="checkbox-wrap">
           <input type="checkbox"/>
-          <span>Remember me</span>
+          <span>Remember</span>
         </label>
         <a class="forgot" href="#">Forgot password?</a>
       </div>

@@ -19,7 +19,7 @@
             <ul class="nav-links">
                 <li><a href="../../views/main_pages/home.php">Home...</a></li>
                 <li><a href="../../views/main_pages/about.php">About...</a></li>
-                <li><a href="../../Auth/login.php" class="btn-login">Login...</a></li>
+                <li><a href="../../views/Auth/login.php" class="btn-login">Login...</a></li>
             </ul>
         </div>
     </nav>
@@ -64,7 +64,7 @@
                     </div>
                     <h3>I'm a Freelancer</h3>
                     <p>Showcase your expertise and work on high-value specialized projects</p>
-                    <a href="freelancer.html" class="card-link">Get Started →</a>
+                    <a href="../../views/Auth/login.php" class="card-link">Get Started </a>
                 </div>
             </div>
         </div>
@@ -107,7 +107,7 @@
                     <h4>Company</h4>
                     <ul>
                         <li><a href="../../views/main_pages/about.php">About Us</a></li>
-                        <li><a href="#">How It Works</a></li>
+                        <li><a href="../../views/Auth/login.php">How It Works</a></li>
                         <li><a href="../../views/main_pages/Contact.php">Contact</a></li>
                     </ul>
                 </div>
@@ -122,8 +122,8 @@
                 <div class="footer-section">
                     <h4>For Freelancers</h4>
                     <ul>
-                        <li><a href="../../views/Freelancer/freelancer-dashboard.php">Find Work</a></li>
-                        <li><a href="#">Get Verified</a></li>
+                        <li><a href="../../views/Auth/login.php">Find Work</a></li>
+                        <li><a href="../../views/Auth/login.php">Get Verified</a></li>
                         <li><a href="#">Resources</a></li>
                     </ul>
                 </div>

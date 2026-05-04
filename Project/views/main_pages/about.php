@@ -16,7 +16,7 @@
             <ul class="nav-links">
                 <li><a href="../../views/main_pages/home.php">Home</a></li>
                 <li><a href="../../views/main_pages/about.php">About</a></li>
-                <li><a href="../../Auth/login.php" class="btn-login">Login</a></li>
+                <li><a href="../../views/Auth/login.php" class="btn-login">Login</a></li>
             </ul>
         </div>
     </nav>
@@ -102,8 +102,8 @@
             <h2>Ready to Get Started?</h2>
             <p>Join thousands of professionals and businesses using Worklio</p>
             <div class="cta-buttons">
-                <a href="client.html" class="btn btn-primary">Hire Specialists</a>
-                <a href="freelancer.html" class="btn btn-secondary">Find Work</a>
+                <a href="../../views/Auth/login.php" class="btn btn-primary">Hire Specialists</a>
+                <a href="../../views/Auth/login.php" class="btn btn-secondary">Find Work</a>
             </div>
         </div>
     </section>
@@ -127,17 +127,17 @@
                 <div class="footer-section">
                     <h4>For Clients</h4>
                     <ul>
-                        <li><a href="client.html">Post a Project</a></li>
-                        <li><a href="#">Browse Specialists</a></li>
-                        <li><a href="#">Pricing</a></li>
+                        <li><a href="../../views/Auth/login.php">Post a Project</a></li>
+                        <li><a href="../../views/Auth/login.php">Browse Specialists</a></li>
+                        <li><a href="../../views/Auth/login.php">Pricing</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>For Freelancers</h4>
                     <ul>
-                        <li><a href="freelancer.html">Find Work</a></li>
-                        <li><a href="#">Get Verified</a></li>
-                        <li><a href="#">Resources</a></li>
+                        <li><a href="../../views/Auth/login.php">Find Work</a></li>
+                        <li><a href="../../views/Auth/login.php">Get Verified</a></li>
+                        <li><a href="">Resources</a></li>
                     </ul>
                 </div>
             </div>
