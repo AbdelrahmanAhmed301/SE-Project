@@ -1,7 +1,12 @@
 <?php
 session_start();
+if (!isset($_SESSION["userid"])) {
+    header("Location: ../login.php");
+    exit();
+}
 require_once "../../Controllers/DBcontrollers.php";
 require_once "../../Controllers/post_project.php";
+require_once "../../Models/user.php";
 $db = new DBcontrollers();
 $db->openconnection();
 
@@ -53,9 +58,9 @@ $current_user = $user_info[0] ?? null;
   </nav>
 
   <div class="sidebar-user">
-    <div class="ava"><?php echo strtoupper(substr($current_user['username'] ?? 'U', 0, 1)); ?></div>
+  <div class="ava"><?php echo strtoupper(substr($current_user['username'] ?? 'G', 0, 1)); ?></div>
     <div>
-      <div class="user-name"><?php echo $current_user['username']  ?></div>
+      <div class="user-name"><?php echo htmlspecialchars($current_user['username'] ?? 'Guest'); ?></div>
       <div class="user-role">Full-Stack Dev</div>
     </div>
   </div>
