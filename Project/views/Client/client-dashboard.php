@@ -3,7 +3,7 @@ session_start();
 
 
 if (!isset($_SESSION["userid"]) || empty($_SESSION["userid"])) {
-    header("Location: ../../viwes/Auth/login.php"); 
+    header("Location: ../../views/Auth/login.php"); 
     exit();
 }
 

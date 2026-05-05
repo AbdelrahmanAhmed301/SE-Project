@@ -1,33 +1,50 @@
 <?php
 session_start(); 
+
 require_once "../../Models/user.php";
 require_once "../../Models/project.php";
+require_once "../../Models/notification.php"; 
 require_once "../../Controllers/post_project.php";
 require_once "../../Controllers/notifycontrollers.php";
+
+
+if (!isset($_SESSION["userid"]) || empty($_SESSION["userid"])) {
+    header("Location: ../../views/Auth/login.php"); 
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
     if (!empty($_POST["title"]) && !empty($_POST["description"])) {
         
+
         $project = new project();
         $project->title = $_POST["title"];
         $project->description = $_POST["description"];
         $project->milestones = $_POST["milestones"];
         $project->budget = $_POST["budget"];
-        
         $project->client_id = $_SESSION["userid"]; 
 
         $post_controller = new post_project();
+
+
         if ($post_controller->post_project($project)) {
-            $notifiy=new notification();
-            $notifiy_title="New Project Posted";
-            $notifiy_msg="A new project: " . $project->title . " is available now. Check it out ";
+            
+    
+            $notif = new notification();
+            $notif->title = "New Project Posted";
+            $notif->msg = "A new project: " . htmlspecialchars($project->title) . " is available now.";
+            $notif->create_at = date('Y-m-d H:i:s');
+            $notif->user_id = $_SESSION["userid"]; 
 
-            // $notifiy->notify_all_freelancers($notifiy_title,$notifiy_msg);
+            $notify = new notifycontrollers();
+        
+            $notify->notify_all_freelancers($notif);
 
-            echo "Project published successfully!";
-            header("Location: ../../views/client-dashboard.php");
+            
+            header("Location: ../client-dashboard.php");
+            exit(); 
         } else {
-            echo "Failed to publish project.";
+            echo "Error: Could not save the project.";
         }
     }
 }

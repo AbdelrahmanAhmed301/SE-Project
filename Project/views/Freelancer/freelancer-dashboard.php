@@ -80,7 +80,6 @@ $current_user = $user_info[0] ?? null;
     <div class="search">🔍 Search...</div>
     <!-- <div class="icon-btn">🔔<div class="dot"> -->
 
-    <!-- تعديل في Topbar داخل freelancer-dashboard.php -->
 <div class="icon-btn" onclick="open_modal('notification-modal')">
     🔔
     <?php if (count($notifications) > 0): ?>
@@ -834,34 +833,6 @@ $current_user = $user_info[0] ?? null;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Project Detail Modal -->
 <div class="overlay" id="project-modal">
   <div class="modal" style="width:540px">
@@ -938,44 +909,28 @@ $current_user = $user_info[0] ?? null;
 
 <!-- Toast -->
 <div id="toast-el" class="toast">✓ <span id="toast-txt"></span></div>
-<!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Worklio</h3>
-                    <p>The marketplace for specialized professional services</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="../../views/main_pages/about.php">About Us</a></li>
-                        <li><a href="../../views/Auth/login.php">How It Works</a></li>
-                        <li><a href="../../views/main_pages/Contact.php">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>For Clients</h4>
-                    <ul>
-                        <li><a href="../../Auth/login.php">Post a Project</a></li>
-                        <li><a href="../../Auth/login.php">Browse Specialists</a></li>
-                        <li><a href="#">Pricing</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>For Freelancers</h4>
-                    <ul>
-                        <li><a href="../../views/Auth/login.php">Find Work</a></li>
-                        <li><a href="../../views/Auth/login.php">Get Verified</a></li>
-                        <li><a href="#">Resources</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Worklio. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+<!-- داخل الـ Modal في freelancer-dashboard.php[cite: 11] -->
+<div class="overlay" id="notification-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Notifications</div>
+      <button class="modal-close" onclick="close_modal('notification-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <?php if (!empty($notifications)): ?>
+        <?php foreach ($notifications as $notif): ?>
+          <div style="padding: 10px; border-bottom: 1px solid #eee;">
+            <strong><?php echo htmlspecialchars($notif['title']); ?></strong>
+            <p style="font-size: 12px; color: #666;"><?php echo htmlspecialchars($notif['msg']); ?></p>
+            <small><?php echo $notif['create_at']; ?></small>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <p>No new notifications.</p>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
 
 <script>
   function go(sec, el) {
