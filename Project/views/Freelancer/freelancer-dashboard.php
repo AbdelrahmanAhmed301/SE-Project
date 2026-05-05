@@ -6,6 +6,7 @@ if (!isset($_SESSION["userid"])) {
 }
 require_once "../../Controllers/DBcontrollers.php";
 require_once "../../Controllers/post_project.php";
+require_once "../../Controllers/notifycontrollers.php";
 require_once "../../Models/user.php";
 $db = new DBcontrollers();
 $db->openconnection();
@@ -16,7 +17,10 @@ $projects = $db->Select_query("
     OR status IS NULL 
 ");
 
+
+
 $current_user_id = $_SESSION["userid"];
+$notifications = $db->Select_query("SELECT * FROM notification WHERE user_id = '$current_user_id'");
 $user_info = $db->Select_query("SELECT * FROM user WHERE user_id = '$current_user_id'");
 $current_user = $user_info[0] ?? null;
 ?>
@@ -67,12 +71,22 @@ $current_user = $user_info[0] ?? null;
   </div>
 </aside>
 
+
+
 <!-- Main -->
 <main class="main">
   <header class="topbar">
     <div class="topbar-title" id="topbar-title">Dashboard</div>
     <div class="search">🔍 Search...</div>
-    <div class="icon-btn">🔔<div class="dot"></div></div>
+    <!-- <div class="icon-btn">🔔<div class="dot"> -->
+
+    <!-- تعديل في Topbar داخل freelancer-dashboard.php -->
+<div class="icon-btn" onclick="open_modal('notification-modal')">
+    🔔
+    <?php if (count($notifications) > 0): ?>
+        <div class="dot" style="background: red; width: 8px; height: 8px; border-radius: 50%; position: absolute; top: 0; right: 0;"></div>
+    <?php endif; ?>
+</div>
     <button class="btn btn-primary btn-sm" onclick="open_modal('proposal-modal')">+ Send Proposal</button>
   </header>
 
@@ -775,6 +789,78 @@ $current_user = $user_info[0] ?? null;
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+<div class="overlay" id="proposal-modal">
+  <div class="modal">
+    <!-- <div class="modal-head">
+      <div class="modal-title">Send a Proposal</div>
+      <button class="modal-close" onclick="close_modal('proposal-modal')">×</button>
+    </div> -->
+    <div class="modal-body">
+      <!-- <div class="form-group"><label class="label">JOB</label><input class="input" value=""></div> -->
+      <div class="form-row">
+        <!-- <div class="form-group"><label class="label">YOUR BID ($)</label><input class="input" type="number" placeholder="e.g. 3500"></div>
+        <div class="form-group"><label class="label">DELIVERY TIME</label>
+          <select class="select">
+            <option>1 week</option><option>2 weeks</option><option selected>1 month</option><option>2 months</option>
+          </select>
+        </div>
+      </div> -->
+      <div class="form-group"><label class="label">COVER LETTER</label><textarea class="textarea" style="min-height:120px" placeholder="Introduce yourself and explain why you're a great fit..."></textarea></div>
+    </div>
+    <!-- <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="close_modal('proposal-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="close_modal('proposal-modal');toast('Proposal submitted!')">Submit Proposal</button>
+    </div> -->
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Project Detail Modal -->
 <div class="overlay" id="project-modal">

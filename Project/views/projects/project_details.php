@@ -3,6 +3,7 @@ session_start();
 require_once "../../Models/user.php";
 require_once "../../Models/project.php";
 require_once "../../Controllers/post_project.php";
+require_once "../../Controllers/notifycontrollers.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
     if (!empty($_POST["title"]) && !empty($_POST["description"])) {
@@ -17,8 +18,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
 
         $post_controller = new post_project();
         if ($post_controller->post_project($project)) {
+            $notifiy=new notification();
+            $notifiy_title="New Project Posted";
+            $notifiy_msg="A new project: " . $project->title . " is available now. Check it out ";
+
+            // $notifiy->notify_all_freelancers($notifiy_title,$notifiy_msg);
+
             echo "Project published successfully!";
-            header("Location: ../../views/projects/project_details.php");
+            header("Location: ../../views/client-dashboard.php");
         } else {
             echo "Failed to publish project.";
         }
@@ -31,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>publish project</title>
     <link rel="stylesheet" href="/Project/public/assets/css/client-dashboard.css">
 </head>
 <body>

@@ -9,27 +9,26 @@ class notifycontrollers{
         $this->db = new DBcontrollers(); 
     }
 
-public function notify_all_freelancers(notification $notifiy) {
+// تعديل في ملف notifycontrollers.php
+public function notify_all_freelancers($title, $msg) {
     if (!$this->db->openconnection()) {
         return false;
     }
 
-    
-        $query = "INSERT INTO notification (user_id, title, msg, create_at) 
-                VALUES ('$notifiy->user_id', 
-                        '{$notifiy->title}', 
-                        '{$notifiy->msg}', 
-                        '{$notifiy->create_at}')";
-        
-        $result = $this->db->insertquery($query);
-        if($result){
-            return true;
-        }
-        else{
-            return false;
-        }
+    $freelancers = $this->db->Select_query("SELECT user_id FROM user WHERE role = 'freelancer'");
 
+    if ($freelancers) {
+        foreach ($freelancers as $freelancer) {
+            $user_id = $freelancer['user_id'];
+            $created_at = date('Y-m-d H:i:s');
 
+            $query = "INSERT INTO notification (user_id, title, msg, create_at) 
+                    VALUES ('$user_id', '$title', '$msg', '$created_at')";
+            $this->db->insertquery($query);
+        }
+        return true;
+    }
+    return false;
 }
 }
 
