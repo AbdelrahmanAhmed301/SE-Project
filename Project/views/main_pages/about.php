@@ -129,7 +129,8 @@
                     <ul>
                         <li><a href="../../views/Auth/login.php">Post a Project</a></li>
                         <li><a href="../../views/Auth/login.php">Browse Specialists</a></li>
-                        <li><a href="../../views/Auth/login.php">Pricing</a></li>
+                        <li><a href="../../views/Auth/login.php"
+                    >Pricing</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -137,11 +138,7 @@
                     <ul>
                         <li><a href="../../views/Auth/login.php">Find Work</a></li>
                         <li><a href="../../views/Auth/login.php">Get Verified</a></li>
-<<<<<<< HEAD
                         <li><a href="">Resources</a></li>
-=======
-                        <li><a href="../../views/Auth/login.php">Resources</a></li>
->>>>>>> 15d11acaaa26c4811bd4336aeb768ce03a9ba2c8
                     </ul>
                 </div>
             </div>
