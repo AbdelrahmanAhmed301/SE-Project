@@ -137,7 +137,7 @@ $current_user = $user_info[0] ?? null;
           <?php echo htmlspecialchars($project['title']); ?>
         </div>
 
-        <!-- ✅ Description Added -->
+        <!--  Description Added -->
         <div class="list-desc" style="font-size:12px;color:#888;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
           <?php echo htmlspecialchars($project['description']); ?>
         </div>
