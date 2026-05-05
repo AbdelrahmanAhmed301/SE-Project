@@ -29,6 +29,7 @@ $current_user = $user_info[0] ?? null;
 <title>WorkNest — Freelancer Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../public/assets/css/freelancer.css">
+<link rel="stylesheet" href="../../public/assets/css/home.css">
 </head>
 <body>
 
@@ -851,6 +852,44 @@ $current_user = $user_info[0] ?? null;
 
 <!-- Toast -->
 <div id="toast-el" class="toast">✓ <span id="toast-txt"></span></div>
+<!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Worklio</h3>
+                    <p>The marketplace for specialized professional services</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="../../views/main_pages/about.php">About Us</a></li>
+                        <li><a href="../../views/Auth/login.php">How It Works</a></li>
+                        <li><a href="../../views/main_pages/Contact.php">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>For Clients</h4>
+                    <ul>
+                        <li><a href="../../Auth/login.php">Post a Project</a></li>
+                        <li><a href="../../Auth/login.php">Browse Specialists</a></li>
+                        <li><a href="#">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>For Freelancers</h4>
+                    <ul>
+                        <li><a href="../../views/Auth/login.php">Find Work</a></li>
+                        <li><a href="../../views/Auth/login.php">Get Verified</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Worklio. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
 <script>
   function go(sec, el) {
