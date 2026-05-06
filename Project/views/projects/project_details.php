@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>publish project</title>
+    <title>publish *********************** project</title>
     <link rel="stylesheet" href="/Project/public/assets/css/client-dashboard.css">
 </head>
 <body>
