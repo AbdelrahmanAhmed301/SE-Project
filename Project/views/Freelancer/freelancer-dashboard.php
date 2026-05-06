@@ -1,7 +1,16 @@
 <?php
 session_start();
+
+
 if (!isset($_SESSION["userid"])) {
-    header("Location: ../login.php");
+    header("Location: ../../views/Auth/login.php");
+    exit();
+}
+
+
+if ($_SESSION["user_roleid"] != 3) {
+
+    header("Location: ../../views/Auth/login.php");
     exit();
 }
 require_once "../../Controllers/DBcontrollers.php";
@@ -78,13 +87,20 @@ $current_user = $user_info[0] ?? null;
   <header class="topbar">
     <div class="topbar-title" id="topbar-title">Dashboard</div>
     <div class="search">🔍 Search...</div>
-    <!-- <div class="icon-btn">🔔<div class="dot"> -->
 
-<div class="icon-btn" onclick="open_modal('notification-modal')">
+<?php 
+
+$unread_count = 0;
+foreach ($notifications as $n) {
+    if ($n['is_read'] == 0) $unread_count++;
+}
+?>
+<div class="icon-btn" onclick="open_modal('notification-modal'); markNotificationsAsRead();">
     🔔
-    <?php if (count($notifications) > 0): ?>
-        <div class="dot" style="background: red; width: 8px; height: 8px; border-radius: 50%; position: absolute; top: 0; right: 0;"></div>
+    <?php if ($unread_count > 0): ?>
+        <div id="notif-dot" class="dot" style="background: red; width: 8px; height: 8px; border-radius: 50%; position: absolute; top: 0; right: 0;"></div>
     <?php endif; ?>
+</div>
 </div>
     <button class="btn btn-primary btn-sm" onclick="open_modal('proposal-modal')">+ Send Proposal</button>
   </header>
@@ -909,7 +925,7 @@ $current_user = $user_info[0] ?? null;
 
 <!-- Toast -->
 <div id="toast-el" class="toast">✓ <span id="toast-txt"></span></div>
-<!-- داخل الـ Modal في freelancer-dashboard.php[cite: 11] -->
+
 <div class="overlay" id="notification-modal">
   <div class="modal">
     <div class="modal-head">
@@ -983,6 +999,17 @@ $current_user = $user_info[0] ?? null;
     area.scrollTop = area.scrollHeight;
     inp.value = '';
   }
+  function markNotificationsAsRead() {
+    const dot = document.getElementById('notif-dot');
+    if (dot) {
+        dot.style.display = 'none';
+    }
+    fetch('../../Controllers/mark_read.php', {
+        method: 'POST'
+    })
+    .then(response => response.text())
+    .then(data => console.log("Notifications updated"));
+}
 </script>
 </body>
 </html>
