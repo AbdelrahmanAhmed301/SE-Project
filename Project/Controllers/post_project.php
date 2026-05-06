@@ -5,11 +5,11 @@ class post_project{
     private $db;
 
     public function __construct() {
-        $this->db = new DBcontrollers(); 
+        $this->db = DBcontrollers::getInstance();
     }
 
     public function post_project(project $project){
-        if($this->db->openconnection()){
+        if($this->db = DBcontrollers::getInstance()){
             
             $query = "INSERT INTO projects (title, description, milestones, budget, client_id)
             VALUES ('$project->title', '$project->description', '$project->milestones', '$project->budget', '$project->client_id')";
