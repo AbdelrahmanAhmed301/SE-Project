@@ -1,5 +1,12 @@
 <?php
+
+
+
+
 session_start();
+
+
+
 
 if (!isset($_SESSION["userid"])) {
     header("Location: ../../views/Auth/login.php");
@@ -17,8 +24,18 @@ require_once "../../Controllers/post_project.php";
 
 require_once "../../Models/user.php"; 
 
-$db = new DBcontrollers();
-$db->openconnection();
+
+$db1 = DBcontrollers::getInstance();
+$db2 = DBcontrollers::getInstance();
+
+if ($db1 === $db2) {
+    echo "Singleton is working! Both variables share the same instance.";
+} else {
+    echo "Singleton Failed! Different instances created.";
+}
+
+
+$db = DBcontrollers::getInstance(); 
 
 $current_user_id = $_SESSION["userid"]; 
 
