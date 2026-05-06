@@ -31,23 +31,22 @@ class authcontrollers {
     }
 
 public function register(user $user){
-
     if($this->db->openconnection()){
-
-
         $query = "INSERT INTO user (username, email, password_hash, role_id)
-        VALUES ('$user->username', '$user->email', '$user->password_hash', '$user->role_id')";
-
+                VALUES ('$user->username', '$user->email', '$user->password_hash', '$user->role_id')";
+        
         $result = $this->db->insertquery($query);
 
         if($result){
+            
+            $res = $this->db->Select_query("SELECT user_id FROM user WHERE email='$user->email'");
+            $_SESSION["userid"] = $res[0]["user_id"];
+            $_SESSION["username"] = $user->username;
+            $_SESSION["user_roleid"] = $user->role_id;
+            // -------------------------
             return true;
-        } else {
-            return false; 
         }
-
     }
-
     return false;
 }
 
