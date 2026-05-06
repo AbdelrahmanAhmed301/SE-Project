@@ -17,8 +17,7 @@ require_once "../../Controllers/DBcontrollers.php";
 require_once "../../Controllers/post_project.php";
 require_once "../../Controllers/notifycontrollers.php";
 require_once "../../Models/user.php";
-$db = new DBcontrollers();
-$db->openconnection();
+$db = DBcontrollers::getInstance(); 
 
 $projects = $db->Select_query("
     SELECT * FROM projects 
