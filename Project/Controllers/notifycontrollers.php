@@ -6,11 +6,11 @@ class notifycontrollers {
     private $db;
 
     public function __construct() {
-        $this->db = new DBcontrollers();
+        $this->db = DBcontrollers::getInstance();
     }
 
     public function notify_all_freelancers(notification $notifiy) {
-        if (!$this->db->openconnection()) {
+        if (!$this->db = DBcontrollers::getInstance()) {
             return false;
         }
 
