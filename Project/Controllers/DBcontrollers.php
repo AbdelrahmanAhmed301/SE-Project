@@ -3,29 +3,25 @@
 use Dba\Connection;
 
 class DBcontrollers {
+    private static $instance = null; 
+    public $connection;
 
-public $db_host="localhost" ;
-public $db_user="root";
-public $db_password="";
-public $db_name="freelancer_platform";
-public $db_port = 3307;
-public $connection;
-
-
-
-
-public function openconnection(){
-    $this->connection=new mysqli($this->db_host,$this->db_user,$this->db_password,$this->db_name,$this->db_port);
-
-    if($this->connection->connect_errno){
-        echo 'error in connection';
-    }
-    else{
-        return true;
+    private function __construct() {
+        $this->openconnection();
     }
 
+    public static function getInstance() {
+        if (self::$instance == null) {
+            self::$instance = new DBcontrollers();
+        }
+        return self::$instance;
+    }
 
-}
+    public function openconnection(){
+        $this->connection = new mysqli("localhost", "root", "", "freelancer_platform", 3307);
+        return $this->connection;
+    }
+
 
 public function Select_query($qry){
     $result=$this->connection->query($qry);
