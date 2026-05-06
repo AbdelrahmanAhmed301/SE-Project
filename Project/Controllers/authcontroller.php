@@ -7,11 +7,11 @@ class authcontrollers {
     private $db;
 
     public function __construct() {
-        $this->db = new DBcontrollers(); 
+        $this->db = DBcontrollers::getInstance(); 
     }
 
     public function login(user $user) {
-        if($this->db->openconnection()){
+        if($this->db = DBcontrollers::getInstance()){
             
             $query = "SELECT * FROM user WHERE email='$user->email' AND password_hash='$user->password_hash'";
             $result = $this->db->Select_query($query);
@@ -31,7 +31,7 @@ class authcontrollers {
     }
 
 public function register(user $user){
-    if($this->db->openconnection()){
+    if($this->db = DBcontrollers::getInstance()){
         $query = "INSERT INTO user (username, email, password_hash, role_id)
                 VALUES ('$user->username', '$user->email', '$user->password_hash', '$user->role_id')";
         
