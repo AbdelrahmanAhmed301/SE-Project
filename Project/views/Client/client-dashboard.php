@@ -1,9 +1,14 @@
 <?php
 session_start();
 
+if (!isset($_SESSION["userid"])) {
+    header("Location: ../../views/Auth/login.php");
+    exit();
+}
 
-if (!isset($_SESSION["userid"]) || empty($_SESSION["userid"])) {
-    header("Location: ../../views/Auth/login.php"); 
+if ($_SESSION["user_roleid"] != 2) {
+    
+    header("Location: ../../views/Auth/login.php");
     exit();
 }
 
@@ -21,7 +26,7 @@ $user_data = $db->Select_query("SELECT * FROM user WHERE user_id = '$current_use
 $current_user = $user_data[0] ?? null;
 
 
-$projects = $db->Select_query("SELECT * FROM projects WHERE client_id = '$current_user_id'");
+$my_own_projects = $db->Select_query("SELECT * FROM projects WHERE client_id = '$current_user_id'");
 
 $post_controller = new post_project();
 $total_spent = $post_controller->get_total_spent($current_user_id);
@@ -104,8 +109,8 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
                 <div class="stat-card gold">
                     <div class="stat-label">ACTIVE PROJECTS</div>
                         <div class="stat-value">
-                            <?php if(!empty($projects)){
-                                echo count($projects);
+                            <?php if(!empty($my_own_projects)){
+                                echo count($my_own_projects);
                             }
                                 else{
                                     echo 0;
@@ -130,8 +135,8 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
             <div class="card-title">My Recent Projects</div>
         </div>
         
-        <?php if ($projects): ?>
-            <?php foreach ($projects as $project): ?>
+        <?php if ($my_own_projects): ?>
+            <?php foreach ($my_own_projects as $project): ?>
                 <div class="project-item">
                     <div class="project-info">
                         <div class="project-name"><?php echo $project['title']; ?></div>
