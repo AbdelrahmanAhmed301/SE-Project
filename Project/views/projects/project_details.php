@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
             $notify->notify_all_freelancers($notif);
 
             
-            header("Location: ../client-dashboard.php");
+            header("Location: ../../views/projects/project_details.php");
             exit(); 
         } else {
             echo "Error: Could not save the project.";
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>publish *********************** project</title>
+    <title>publish project</title>
     <link rel="stylesheet" href="/Project/public/assets/css/client-dashboard.css">
 </head>
 <body>
