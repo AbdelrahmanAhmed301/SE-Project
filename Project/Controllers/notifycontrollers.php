@@ -23,8 +23,6 @@ class notifycontrollers {
                 $user_id = $freelancer['user_id'];
                 $created_at = date('Y-m-d H:i:s');
 
-                // 2. التحقق من عدم وجود إشعار متطابق تماماً أرسل مؤخراً لمنع التكرار (Anti-Duplication Check)
-                // نتحقق من العنوان والرسالة والمستخدم خلال آخر دقيقة مثلاً
                 $checkQuery = "SELECT id FROM notification 
                             WHERE user_id = '$user_id' 
                             AND title = '$notifiy->title' 
@@ -34,7 +32,7 @@ class notifycontrollers {
                 $exists = $this->db->Select_query($checkQuery);
 
                 if (!$exists) {
-                    // 3. الإرسال فقط إذا لم يكن الإشعار موجوداً بالفعل
+
                     $insertQuery = "INSERT INTO notification (user_id, title, msg, create_at) 
                                     VALUES ('$user_id', '$notifiy->title', '$notifiy->msg', '$created_at')";
                     
