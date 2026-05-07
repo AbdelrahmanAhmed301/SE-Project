@@ -17,6 +17,7 @@ require_once "../../Controllers/DBcontrollers.php";
 require_once "../../Controllers/post_project.php";
 require_once "../../Controllers/notifycontrollers.php";
 require_once "../../Models/user.php";
+require_once "../../Models/proposal.php";
 $db = DBcontrollers::getInstance(); 
 
 $projects = $db->Select_query("
@@ -173,7 +174,7 @@ foreach ($notifications as $n) {
           $<?php echo number_format($project['budget']); ?>
         </div>
         <div class="badge badge-green" style="margin-top:4px; display:inline-block;">
-        <button class="btn btn-primary btn-sm" onclick="open_modal('proposal-modal')">Apply Now</button>
+        <button class="btn btn-primary btn-sm"><a href="../../views/Bid_submission/bid_submit.php">Apply Now</a></button>
           
         </div>
 
