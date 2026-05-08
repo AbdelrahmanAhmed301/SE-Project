@@ -21,6 +21,7 @@ if ($_SESSION["user_roleid"] != 2) {
 
 require_once "../../Controllers/DBcontrollers.php";
 require_once "../../Controllers/post_project.php";
+require_once "../../Models/contract.php";
 
 require_once "../../Models/user.php"; 
 
@@ -35,6 +36,7 @@ $current_user = $user_data[0] ?? null;
 
 
 $my_own_projects = $db->Select_query("SELECT * FROM projects WHERE client_id = '$current_user_id'");
+$contracts = $db->Select_query("SELECT * FROM contract WHERE client_id = '$current_user_id'");
 
 
 $post_controller = new post_project();
@@ -80,6 +82,14 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         </a>
 
         </div>
+        <?php foreach ($contracts as $row): ?>
+    <div class="project-item">
+        
+        <a href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" class="btn-primary">
+        project_details
+        </a>
+    </div>
+    <?php endforeach; ?>
     </div>
     </div>
         <div class="nav-item" onclick="navigate('messages', this)">
