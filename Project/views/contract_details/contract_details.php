@@ -3,24 +3,29 @@ session_start();
 
 require_once "../../Models/user.php";
 require_once "../../Models/project.php";
-require_once "../../Models/notification.php"; 
-require_once "../../Controllers/notifycontrollers.php";
 require_once "../../Controllers/contractController.php";
 require_once "../../Models/contract.php";
-
 
 if (!isset($_SESSION["userid"]) || empty($_SESSION["userid"])) {
     header("Location: ../../views/Auth/login.php"); 
     exit();
 }
-$contract_id = $_GET['contract_id']; 
-$manager = new createcontract();
-$contract_data = $manager->get_contract_details($contract_id);
 
-if (!$contract_data) {
-    die("contract not exist");
+// التأكد من أن contract_id موجود في الرابط
+if (isset($_GET['contract_id']) && !empty($_GET['contract_id'])) {
+    $contract_id = $_GET['contract_id']; 
+    $manager = new createcontract();
+    $result = $manager->get_contract_details($contract_id);
+
+    if ($result && count($result) > 0) {
+        $contract_data = $result[0]; 
+    } else {
+        die("خطأ: العقد غير موجود في قاعدة البيانات.");
+    }
+} else {
+    // في حال تم فتح الصفحة بدون معرف عقد
+    die("خطأ: لم يتم تحديد رقم العقد. يرجى العودة للوحة التحكم.");
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -40,16 +45,17 @@ if (!$contract_data) {
         <p><strong>client</strong> <?php echo $contract_data['client_name']; ?></p>
         <p><strong>deadline</strong> <?php echo $contract_data['deadline']; ?></p>
         <p><strong>budget</strong> <?php echo $contract_data['budget']; ?></p>
-        <p><strong>revision_limts </strong> <?php echo $contract_data['revision_used'] . " / " . $contract_data['revision_limts']; ?></p>
+        <p><strong>revision_limits </strong> <?php echo $contract_data['revision_limits']?></p>
+        <p><strong>revision_used </strong> <?php echo $contract_data['revision_used']?></p>
     </div>
 
     <div class="actions">
-    <?php if ($_SESSION['role_name'] == 'Client'): ?>
+    <?php if (isset($_SESSION['user_roleid']) && $_SESSION['user_roleid'] == 2): ?>
         <a href="../../Controllers/update_status.php?id=<?php echo $contract_id; ?>&action=approve" class="btn-success">Approve Work</a>
         <a href="../../Controllers/update_status.php?id=<?php echo $contract_id; ?>&action=revise" class="btn-warning">Revision Request</a>
     <?php endif; ?>
 
-    <?php if ($_SESSION['role_name'] == 'freelancer'): ?>
+    <?php if (isset($_SESSION['user_roleid']) && $_SESSION['user_roleid'] == 3): ?>
         <a href="../../Controllers/submit_work.php?id=<?php echo $contract_id; ?>" class="btn-primary">Submit Work</a>
     <?php endif; ?>
 </div>
