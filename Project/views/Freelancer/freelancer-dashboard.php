@@ -1,4 +1,5 @@
 <?php
+require_once "../../Models/contract.php";
 session_start();
 
 
@@ -30,6 +31,7 @@ $projects = $db->Select_query("
 
 $current_user_id = $_SESSION["userid"];
 $notifications = $db->Select_query("SELECT * FROM notification WHERE user_id = '$current_user_id'");
+$contracts = $db->Select_query("SELECT * FROM contract WHERE freelancer_id = '$current_user_id'");
 $user_info = $db->Select_query("SELECT * FROM user WHERE user_id = '$current_user_id'");
 $current_user = $user_info[0] ?? null;
 ?>
@@ -551,6 +553,15 @@ foreach ($notifications as $n) {
         <div class="sec-title">Invoices</div>
         <button class="btn btn-primary" onclick="open_modal('invoice-modal')">+ Create Invoice</button>
       </div>
+      <div class="sec-head">
+        <?php foreach ($contracts as $row): ?>
+    <div class="project-item">
+        
+        <a href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" class="btn-primary">
+           project_details
+        </a>
+    </div>
+<?php endforeach; ?>
       <div class="card">
         <table class="tbl">
           <thead><tr><th>Invoice</th><th>Client</th><th>Project</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
