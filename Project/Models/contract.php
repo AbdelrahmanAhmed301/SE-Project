@@ -7,7 +7,7 @@ public $project_id;
 public $freelancer_id;
 
 public $deadline;
-public $revision_limts;
+public $revision_limits;
 
 public $revision_used;
 public $create_at;
