@@ -27,6 +27,7 @@ require_once "../../Models/user.php";
 
 $db = DBcontrollers::getInstance(); 
 
+
 $current_user_id = $_SESSION["userid"]; 
 
 $user_data = $db->Select_query("SELECT * FROM user WHERE user_id = '$current_user_id'");
@@ -34,6 +35,7 @@ $current_user = $user_data[0] ?? null;
 
 
 $my_own_projects = $db->Select_query("SELECT * FROM projects WHERE client_id = '$current_user_id'");
+
 
 $post_controller = new post_project();
 $total_spent = $post_controller->get_total_spent($current_user_id);
@@ -69,6 +71,16 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         <a href="../../views/projects/project_details.php" style="text-decoration:none; color:inherit;">
             <div class="icon"></div>  + Post a Project
         </a>
+
+        </div>
+        </div>
+            <div class="nav-item">
+        <a href="../../views/proposal_request/proposal_request.php" style="text-decoration:none; color:inherit;">
+            <div class="icon"></div>  +proposal-request
+        </a>
+
+        </div>
+    </div>
     </div>
         <div class="nav-item" onclick="navigate('messages', this)">
             <div class="icon">◻</div> Messages
@@ -109,6 +121,10 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
             <div class="icon-btn">🔔</div>
         </div>
     </header>
+
+
+
+    
 
     <div class="content">
         <!-- Stats Overview -->
@@ -170,37 +186,7 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
     </div>
 </main>
 
-<div class="modal-overlay" id="create-project-modal">
-    <div class="modal">
-        <!-- <form action="post_project.php" method="POST"> 
-            <div class="modal-header">
-                <div class="modal-title">New Project</div>
-                <button type="button" class="modal-close"><a href="../../views/projects/project_details.php">+ post New Project</a></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Project Title</label>
-                    <input type="text" name="title" class="form-input" placeholder="Name your project" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-input" placeholder="Details..." required style="min-height: 100px;"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Miletones</label>
-                    <textarea name="Miletones" class="form-input" placeholder="Miletones" required style="min-height: 100px;"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Budget ($)</label>
-                    <input type="number" name="budget" class="form-input" placeholder="e.g. 1000">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" name="submit_project" class="btn btn-primary" style="width:100%">Post Now</button>
-            </div>
-        </form> -->
-    </div>
-</div>
+
 <!-- Footer -->
     <footer class="footer">
         <div class="container">
