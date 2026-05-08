@@ -174,7 +174,11 @@ foreach ($notifications as $n) {
           $<?php echo number_format($project['budget']); ?>
         </div>
         <div class="badge badge-green" style="margin-top:4px; display:inline-block;">
-        <button class="btn btn-primary btn-sm"><a href="../../views/Bid_submission/bid_submit.php">Apply Now</a></button>
+        <a 
+   href="../../views/Bid_submission/bid_submit.php?project_id=<?php echo $project['project_id']; ?>" 
+   class="btn btn-primary btn-sm"
+>Apply Now
+</a>
           
         </div>
 
