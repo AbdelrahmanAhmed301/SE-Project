@@ -75,11 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_proposal"])) {
             <div class="form-group">
                 <label class="label" >Delivery Time</label>
                 <select class="select" name="Delivery_time">
-                    <option value="1_week">1 week</option>
-                    <option value="2_weeks">2 weeks</option>
-                    <option value="1_month" selected>1 month</option>
-                    <option value="2_months">2 months</option>
-                </select>
+                <option value="+1 week">1 week</option>
+                <option value="+2 weeks">2 weeks</option>
+                <option value="+1 month" selected>1 month</option>
+                <option value="+2 months">2 months</option>
+            </select>
             </div>
         </div>
 
