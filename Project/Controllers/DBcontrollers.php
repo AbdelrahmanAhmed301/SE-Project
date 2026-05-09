@@ -21,6 +21,9 @@ class DBcontrollers {
         $this->connection = new mysqli("localhost", "root", "", "freelancer_platform", 3307);
         return $this->connection;
     }
+    public function get_connection() {
+    return $this->connection;
+}
 
 
 public function Select_query($qry){
