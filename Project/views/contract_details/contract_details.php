@@ -11,7 +11,6 @@ if (!isset($_SESSION["userid"]) || empty($_SESSION["userid"])) {
     exit();
 }
 
-// التأكد من أن contract_id موجود في الرابط
 if (isset($_GET['contract_id']) && !empty($_GET['contract_id'])) {
     $contract_id = $_GET['contract_id']; 
     $manager = new createcontract();
@@ -20,11 +19,11 @@ if (isset($_GET['contract_id']) && !empty($_GET['contract_id'])) {
     if ($result && count($result) > 0) {
         $contract_data = $result[0]; 
     } else {
-        die("خطأ: العقد غير موجود في قاعدة البيانات.");
+        die("contract not exisit in database");
     }
 } else {
-    // في حال تم فتح الصفحة بدون معرف عقد
-    die("خطأ: لم يتم تحديد رقم العقد. يرجى العودة للوحة التحكم.");
+    
+    die("contract_id undefined");
 }
 ?>
 
