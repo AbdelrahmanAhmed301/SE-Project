@@ -5,6 +5,7 @@ require_once "../../Models/user.php";
 require_once "../../Models/project.php";
 require_once "../../Controllers/contractController.php";
 require_once "../../Models/contract.php";
+require_once "../../Models/project.php";
 
 if (!isset($_SESSION["userid"]) || empty($_SESSION["userid"])) {
     header("Location: ../../views/Auth/login.php"); 
@@ -18,8 +19,12 @@ if (isset($_GET['contract_id']) && !empty($_GET['contract_id'])) {
 
     if ($result && count($result) > 0) {
         $contract_data = $result[0]; 
+
+        $project = $contract_data['project_id']; 
+
+        
     } else {
-        die("contract not exisit in database");
+        die("contract not exist in database");
     }
 } else {
     
@@ -55,7 +60,9 @@ if (isset($_GET['contract_id']) && !empty($_GET['contract_id'])) {
     <?php endif; ?>
 
     <?php if (isset($_SESSION['user_roleid']) && $_SESSION['user_roleid'] == 3): ?>
-        <a href="../../Controllers/submit_work.php?id=<?php echo $contract_id; ?>" class="btn-primary">Submit Work</a>
+        <a href="../submit_work/submit_work.php?project_id=<?php echo $project; ?>" class="btn-primary">
+            Submit Work
+        </a>
     <?php endif; ?>
 </div>
 </div>
