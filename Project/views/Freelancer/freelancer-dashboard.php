@@ -557,8 +557,7 @@ foreach ($notifications as $n) {
         <?php foreach ($contracts as $row): ?>
     <div class="project-item">
         
-        <a href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" class="btn-primary">
-           project_details
+        <a href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" class="btn-primary">project_details
         </a>
     </div>
 <?php endforeach; ?>
