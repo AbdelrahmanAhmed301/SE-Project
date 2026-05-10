@@ -80,16 +80,42 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         <a href="../../views/proposal_request/proposal_request.php" style="text-decoration:none; color:inherit;">
             <div class="icon"></div>  +proposal-request
         </a>
-
-        </div>
-        <?php foreach ($contracts as $row): ?>
+       <?php foreach ($contracts as $row): ?>
     <div class="project-item">
         
-        <a href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" class="btn-primary">
-        project_details
+        <a href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" class="btn-primary">project_details
         </a>
     </div>
-    <?php endforeach; ?>
+<?php endforeach; ?>
+
+        </div>
+        <!-- Contracts Button -->
+<div class="nav-section">
+    <div class="nav-label">Contracts</div>
+
+    <?php if (!empty($contracts)): ?>
+        <?php foreach ($contracts as $row): ?>
+            
+            <div class="nav-item">
+                <a 
+                    href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" 
+                    style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:10px;"
+                >
+                    <div class="icon">📄</div>
+                    Contract #<?php echo $row['contract_id']; ?>
+                </a>
+            </div>
+
+        <?php endforeach; ?>
+    <?php else: ?>
+
+        <div class="nav-item">
+            <div class="icon">📄</div>
+            No Contracts
+        </div>
+
+    <?php endif; ?>
+</div>
     </div>
     </div>
         <div class="nav-item" onclick="navigate('messages', this)">
