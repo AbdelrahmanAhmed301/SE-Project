@@ -54,10 +54,10 @@ if (isset($_GET['contract_id']) && !empty($_GET['contract_id'])) {
     </div>
 
     <div class="actions">
-    <?php if (isset($_SESSION['user_roleid']) && $_SESSION['user_roleid'] == 2): ?>
+    <!-- 
         <a href="../../Controllers/update_status.php?id=<?php echo $contract_id; ?>&action=approve" class="btn-success">Approve Work</a>
         <a href="../../Controllers/update_status.php?id=<?php echo $contract_id; ?>&action=revise" class="btn-warning">Revision Request</a>
-    <?php endif; ?>
+     -->
 
     <?php if (isset($_SESSION['user_roleid']) && $_SESSION['user_roleid'] == 3): ?>
         <a href="../submit_work/submit_work.php?project_id=<?php echo $project; ?>" class="btn-primary">
