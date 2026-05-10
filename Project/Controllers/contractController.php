@@ -35,20 +35,31 @@ class createcontract {
 
     return $this->db->Select_query($query);
 }
-// أضف هذه الميثودز داخل كلاس createcontract في ملف contractController.php
-
-// الكود القديم:
-// $query = "SELECT * FROM deliveries WHERE project_id = '$project_id' ORDER BY create_at DESC";
-
-// الكود الجديد (بدون ترتيب):
 public function get_deliveries($project_id) {
     $query = "SELECT * FROM deliveries WHERE project_id = '$project_id'";
     return $this->db->Select_query($query);
 }
 
 public function update_revision_status($contract_id, $used_revisions) {
-    // زيادة عدد الريفيجن المستخدمة
+
     $query = "UPDATE contract SET revision_used = '$used_revisions' WHERE contract_id = '$contract_id'";
-    return $this->db->insertquery($query); // بفرض إن insertquery بتنفذ أي Update/Delete برضه
+    return $this->db->insertquery($query);
+}
+
+
+public function update_contract_status($contract_id, $status) {
+    $query = "UPDATE contract SET status = '$status' WHERE id = '$contract_id'";
+    return $this->db->insertquery($query);
+}
+
+public function get_freelancer_id_by_contract($contract_id) {
+    $query = "SELECT freelancer_id FROM contract WHERE id = '$contract_id'";
+    $result = $this->db->Select_query($query);
+    return $result ? $result[0]['freelancer_id'] : null;
+}
+
+public function close_project($project_id) {
+    $query = "UPDATE project SET status = 'completed' WHERE id = '$project_id'";
+    return $this->db->insertquery($query);
 }
 }
