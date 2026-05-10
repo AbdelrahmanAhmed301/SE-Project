@@ -1,72 +1,87 @@
 <?php
 session_start(); 
-
-require_once "../../Models/user.php";
-require_once "../../Models/project.php";
 require_once "../../Controllers/contractController.php";
-require_once "../../Models/contract.php";
-require_once "../../Models/project.php";
 
-if (!isset($_SESSION["userid"]) || empty($_SESSION["userid"])) {
+// 1. التأكد من تسجيل الدخول
+if (!isset($_SESSION["userid"])) {
     header("Location: ../../views/Auth/login.php"); 
     exit();
 }
 
-if (isset($_GET['contract_id']) && !empty($_GET['contract_id'])) {
-    $contract_id = $_GET['contract_id']; 
-    $manager = new createcontract();
-    $result = $manager->get_contract_details($contract_id);
+$contract_id = $_GET['contract_id'] ?? die("Error: Contract ID undefined");
+$manager = new createcontract();
+$result = $manager->get_contract_details($contract_id);
 
-    if ($result && count($result) > 0) {
-        $contract_data = $result[0]; 
-
-        $project = $contract_data['project_id']; 
-
-        
-    } else {
-        die("contract not exist in database");
-    }
-} else {
-    
-    die("contract_id undefined");
+if (!$result || count($result) == 0) {
+    die("Error: Contract not found");
 }
+
+$contract_data = $result[0];
+$project_id = $contract_data['project_id'];
+$user_role = $_SESSION['user_roleid']; // هنا بنعرف هو مين
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract_details</title>
+    <title>Contract Details</title>
     <link rel="stylesheet" href="/Project/public/assets/css/client-dashboard.css">
+    <style>
+        .contract-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; max-width: 800px; margin: 20px auto; }
+        .section-box { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 15px; }
+        .btn-success { background: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; }
+        .btn-warning { background: #ffc107; color: black; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; }
+        .btn-primary { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 4px; }
+    </style>
 </head>
-<>
-    <div class="contract-card">
-    <h1> project_name: <?php echo $contract_data['project_name']; ?></h1>
+<body>
+
+<div class="contract-card">
+    <h1>Project: <?php echo htmlspecialchars($contract_data['project_name']); ?></h1>
     
     <div class="info-section">
-        <p><strong>freelancer:</strong> <?php echo $contract_data['freelancer_name']; ?></p>
-        <p><strong>client</strong> <?php echo $contract_data['client_name']; ?></p>
-        <p><strong>deadline</strong> <?php echo $contract_data['deadline']; ?></p>
-        <p><strong>budget</strong> <?php echo $contract_data['budget']; ?></p>
-        <p><strong>revision_limits </strong> <?php echo $contract_data['revision_limits']?></p>
-        <p><strong>revision_used </strong> <?php echo $contract_data['revision_used']?></p>
+        <p><strong>Freelancer:</strong> <?php echo htmlspecialchars($contract_data['freelancer_name']); ?></p>
+        <p><strong>Client:</strong> <?php echo htmlspecialchars($contract_data['client_name']); ?></p>
+        <p><strong>Deadline:</strong> <?php echo htmlspecialchars($contract_data['deadline']); ?></p>
+        <p><strong>Budget:</strong> $<?php echo htmlspecialchars($contract_data['budget']); ?></p>
+        <p><strong>Revisions:</strong> <?php echo $contract_data['revision_used']; ?> / <?php echo $contract_data['revision_limits']; ?></p>
     </div>
 
-    <div class="actions">
-    <!-- 
-        <a href="../../Controllers/update_status.php?id=<?php echo $contract_id; ?>&action=approve" class="btn-success">Approve Work</a>
-        <a href="../../Controllers/update_status.php?id=<?php echo $contract_id; ?>&action=revise" class="btn-warning">Revision Request</a>
-     -->
-
-    <?php if (isset($_SESSION['user_roleid']) && $_SESSION['user_roleid'] == 3): ?>
-        <a href="../submit_work/submit_work.php?project_id=<?php echo $project; ?>" class="btn-primary">
-            Submit Work
-        </a>
+    <?php if ($user_role != 2): ?> 
+        <div class="section-box">
+            <h3>Freelancer Tools</h3>
+            <p>You can submit your work using the button below:</p>
+            <a href="../../views/submit_work/submit_work.php?project_id=<?php echo $project_id; ?>" class="btn-primary">
+                Submit Work
+            </a>
+        </div>
     <?php endif; ?>
+
+    <?php if ($user_role == 2): ?>
+        <div class="section-box">
+            <h3>Client Actions</h3>
+            <p>Review the submitted work then take an action:</p>
+            
+            <form action="../contract_details/handel_contractcontroller.php" method="POST">
+                <input type="hidden" name="contract_id" value="<?php echo $contract_id; ?>">
+                
+                <button type="submit" name="action" value="approve" class="btn-success">
+                    Approve Work & Finish
+                </button>
+
+                <?php if ($contract_data['revision_used'] < $contract_data['revision_limits']): ?>
+                    <button type="submit" name="action" value="revise" class="btn-warning">
+                        Request Revision
+                    </button>
+                <?php else: ?>
+                    <p style="color: red; margin-top: 10px;">Revision limit reached.</p>
+                <?php endif; ?>
+            </form>
+        </div>
+    <?php endif; ?>
+
 </div>
-</div>
-                </div>
 
 </body>
 </html>
