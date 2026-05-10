@@ -134,3 +134,13 @@ function selectConversation(el) {
 el.classList.remove('unread');
 el.querySelector('.unread-dot') && el.querySelector('.unread-dot').remove();
 }
+
+function open_modal(id){
+    document.getElementById(id).classList.add("active");
+}
+
+function close_modal(id){
+    document.getElementById(id).classList.remove("active");
+}
+
+
