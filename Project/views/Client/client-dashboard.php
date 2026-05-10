@@ -30,13 +30,18 @@ $db = DBcontrollers::getInstance();
 
 
 $current_user_id = $_SESSION["userid"]; 
+$notifications = $db->Select_query("SELECT * FROM notification WHERE user_id = '$current_user_id'");
 
 $user_data = $db->Select_query("SELECT * FROM user WHERE user_id = '$current_user_id'");
 $current_user = $user_data[0] ?? null;
 
 
 $my_own_projects = $db->Select_query("SELECT * FROM projects WHERE client_id = '$current_user_id'");
-$contracts = $db->Select_query("SELECT * FROM contract WHERE client_id = '$current_user_id'");
+$contracts = $db->Select_query("
+    SELECT c.* FROM contract c 
+    JOIN projects p ON c.project_id = p.project_id 
+    WHERE p.client_id = '$current_user_id'
+");
 
 
 $post_controller = new post_project();
@@ -80,14 +85,6 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         <a href="../../views/proposal_request/proposal_request.php" style="text-decoration:none; color:inherit;">
             <div class="icon"></div>  +proposal-request
         </a>
-       <?php foreach ($contracts as $row): ?>
-    <div class="project-item">
-        
-        <a href="../contract_details/contract_details.php?contract_id=<?php echo $row['contract_id']; ?>" class="btn-primary">project_details
-        </a>
-    </div>
-<?php endforeach; ?>
-
         </div>
         <!-- Contracts Button -->
 <div class="nav-section">
@@ -154,7 +151,9 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         <div class="topbar-actions">
             <!-- onclick="openModal('create-project-modal')" -->
             <button class="btn btn-primary btn-sm" ><a href="../../views/projects/project_details.php">+ New Project</a></button>
-            <div class="icon-btn">🔔</div>
+        <div class="icon-btn" onclick="open_modal('notification-modal')">
+    🔔
+</div>
         </div>
     </header>
 
@@ -221,6 +220,27 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         </section>
     </div>
 </main>
+<!-- <div class="overlay" id="notification-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Notifications</div>
+      <button class="modal-close" onclick="close_modal('notification-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <?php if (!empty($notifications)): ?>
+        <?php foreach ($notifications as $notif): ?>
+          <div style="padding: 10px; border-bottom: 1px solid #eee;">
+            <strong><?php echo htmlspecialchars($notif['title']); ?></strong>
+            <p style="font-size: 12px; color: #666;"><?php echo htmlspecialchars($notif['msg']); ?></p>
+            <small><?php echo $notif['create_at']; ?></small>
+          </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No new notifications.</p>
+    <?php endif; ?>
+    </div>
+  </div>
+</div> -->
 
 
 <!-- Footer -->
@@ -260,6 +280,7 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
                 <p>&copy; 2026 Worklio. All rights reserved.</p>
             </div>
         </div>
+
     </footer>
 
 <script src="/Project/public/assets/js/client-dashboard.js"></script>
