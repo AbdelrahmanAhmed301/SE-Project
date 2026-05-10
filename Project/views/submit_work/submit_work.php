@@ -5,7 +5,18 @@ require_once "../../Controllers/deliveriescontrollers.php";
 require_once "../../Models/deliveries.php";
 
 
+
+$db = DBcontrollers::getInstance();
+
+
 $project_id = $_GET['project_id'] ?? null;
+
+$project_status_res = $db->Select_query("SELECT status FROM projects WHERE project_id = '$project_id'");
+$project_status = $project_status_res[0]['status'] ?? '';
+
+if ($project_status == 'Completed') {
+    die("This project is already completed. You cannot submit more work.");
+}
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
@@ -42,15 +53,30 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         $controller = new deliveriescontrollers();
         $result = $controller->submit_work($delivery);
-
         if ($result) {
-            header("Location: ../../views/Freelancer/freelancer-dashboard.php");
-            exit;
-        } else {
-            echo "Database Error: Could not insert delivery.";
-        }
-    } else {
-        echo "Upload Failed. Check folder permissions.";
+
+            $project_data = $db->Select_query(" SELECT client_id, title FROM projects WHERE project_id = '$project_id'");
+
+    if (!empty($project_data)) {
+
+        $client_id = $project_data[0]['client_id'];
+        $project_title = $project_data[0]['title'];
+
+        $title = "New Work Submission";
+        $msg = "Freelancer submitted work for project: " . $project_title;
+
+        $insert_notification = "
+            INSERT INTO notification(user_id, title, msg)
+            VALUES('$client_id', '$title', '$msg')
+        ";
+
+        $db->insertquery($insert_notification);
+    }
+
+    header("Location: ../../views/Freelancer/freelancer-dashboard.php");
+    exit;
+
+}
     }
 }
 ?>
@@ -60,25 +86,41 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Submit Work</title>
+    <link rel="stylesheet" href="../../public/assets/css/submit-work.css">
     </head>
 <body>
-    <h2>Submit Your Work</h2>
-    
-    <form action="submit_work.php?project_id=<?php echo htmlspecialchars($project_id); ?>" method="POST" enctype="multipart/form-data">
-        
+
+<div class="submit-container">
+
+    <h2 class="submit-title">Submit Your Work</h2>
+
+    <form action="submit_work.php?project_id=<?php echo htmlspecialchars($project_id); ?>" method="POST"
+        enctype="multipart/form-data">
+
         <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($project_id); ?>">
 
-        <div style="margin-bottom: 15px;">
-            <label>Message to Client:</label><br>
-            <textarea name="message" placeholder="Describe your work..." required rows="5" style="width: 100%;"></textarea>
+        <div class="form-group">
+
+            <label>Message to Client:</label>
+
+            <textarea name="message" placeholder="Describe your work..." required rows="5"></textarea>
+
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label>Work File (ZIP, PDF, DOCX):</label><br>
+        <div class="form-group">
+
+            <label>Work File (ZIP, PDF, DOCX):</label>
+
             <input type="file" name="work_file" required>
+
         </div>
 
-        <button type="submit" class="btn-primary">Upload and Submit</button>
+        <button type="submit" class="submit-btn">  Upload and Submit
+        </button>
+
     </form>
+
+</div>
+
 </body>
 </html>
