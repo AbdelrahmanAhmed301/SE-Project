@@ -26,26 +26,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
 
         $post_controller = new post_project();
 
+if ($post_controller->post_project($project)) {
 
-        if ($post_controller->post_project($project)) {
-            
+    $notif = new notification();
+    $notif->title = "New Project Posted";
+    $notif->msg = "A new project: " . htmlspecialchars($project->title) . " is available now.";
+    $notif->create_at = date('Y-m-d H:i:s');
+
+    $notif_controller = new notifycontrollers();
     
-            $notif = new notification();
-            $notif->title = "New Project Posted";
-            $notif->msg = "A new project: " . htmlspecialchars($project->title) . " is available now.";
-            $notif->create_at = date('Y-m-d H:i:s');
-            $notif->user_id = $_SESSION["userid"]; 
 
-            $notify = new notifycontrollers();
-        
-            $notify->notify_all_freelancers($notif);
+    if ($notif_controller->notify_all_freelancers($notif)) {
+        header("Location: ../../views/Client/client-dashboard.php?status=success");
+    } else {
 
-            
-            header("Location: ../../views/projects/project_details.php");
-            exit(); 
-        } else {
-            echo "Error: Could not save the project.";
-        }
+        header("Location: ../../views/Client/client-dashboard.php?status=project_posted_no_notif");
+    }
+} else {
+
+    echo "Error: Could not post the project.";
+}
     }
 }
 ?>
