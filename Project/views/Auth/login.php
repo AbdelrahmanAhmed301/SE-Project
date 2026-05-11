@@ -30,7 +30,7 @@ if(isset($_POST['email']) && isset($_POST['password'])){
             }
             else{
               
-                header("Location: ../../views/Freelancer/freelancer-profile.php");
+                header("Location: ../../views/Freelancer/freelancer-dashboard.php");
                 exit();
             }
         }
