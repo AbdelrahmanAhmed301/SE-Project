@@ -32,7 +32,7 @@ $proposals = $db->Select_query("
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../public/assets/css/proposal_request.css">
-    <title>Document</title>
+    <title>Proposals</title>
 </head>
 <body>
     <section class="proposals-section">
