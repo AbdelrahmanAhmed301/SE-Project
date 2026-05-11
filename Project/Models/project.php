@@ -8,7 +8,7 @@ public $description;
 public $status="";
 public $budget;
 public $client_id;
-public $milestones;
+public $Tools;
 
 
 }
