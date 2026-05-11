@@ -21,7 +21,7 @@ if(isset($_POST['email']) && isset($_POST['password'])){
         } else {
 
             if($_SESSION['user_roleid']==1){
-                header("Location: ../../views/Admin/admin.php");
+                header("Location: ../../views/Admin/admin-dashboard.php");
                 exit();
             }
             elseif($_SESSION['user_roleid']==2){
@@ -29,7 +29,8 @@ if(isset($_POST['email']) && isset($_POST['password'])){
                 exit();
             }
             else{
-                header("Location: ../../views/freelancer/freelancer-dashboard.php");
+              
+                header("Location: ../../views/Freelancer/freelancer-profile.php");
                 exit();
             }
         }
