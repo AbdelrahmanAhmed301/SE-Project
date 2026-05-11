@@ -133,4 +133,11 @@ class FreelancerProfileController {
 
         return $profile;
     }
+    public function addFreelancerSkills($freelancer_id, $skills_array) {
+    $freelancer_id = $this->db->connection->real_escape_string($freelancer_id);
+    foreach ($skills_array as $skill_id) {
+        $skill_id = $this->db->connection->real_escape_string($skill_id);
+        $this->db->insertquery("INSERT INTO freelancer_skills (freelancer_id, skill_id) VALUES ('$freelancer_id', '$skill_id')");
+    }
+}
 }
