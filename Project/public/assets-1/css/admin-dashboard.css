@@ -1,0 +1,242 @@
+/* ============================================================
+   ADMIN-DASHBOARD.CSS
+   ============================================================ */
+
+/* ── Admin Badge ─────────────────────────────────────────── */
+.admin-badge {
+  font-size: 0.625rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--danger);
+  color: var(--white);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* ── Metric Cards ────────────────────────────────────────── */
+.metric-card { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.metric-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+}
+
+.metric-value {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  letter-spacing: -0.04em;
+  color: var(--gray-900);
+  line-height: 1;
+}
+
+.metric-chart {
+  height: 40px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin: var(--space-2) 0;
+}
+
+.metric-bar {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--brand-primary);
+  opacity: 0.2;
+  transition: height 0.6s ease, opacity var(--duration-fast);
+}
+.metric-bar:last-child { opacity: 1; }
+.metric-bar:hover { opacity: 0.8; }
+
+/* ── Niche Performance ───────────────────────────────────── */
+.niche-perf-list { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.niche-perf-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.niche-perf-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  min-width: 180px;
+}
+
+.niche-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.niche-perf-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 140px;
+}
+
+.niche-perf-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  min-width: 50px;
+  text-align: right;
+}
+
+/* ── Dispute Queue ───────────────────────────────────────── */
+.dispute-queue { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.dq-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+}
+
+.dq-item.urgent {
+  background: var(--danger-light);
+  border-color: #FECACA;
+}
+
+.dq-urgency { font-size: 1rem; flex-shrink: 0; }
+
+/* ── RBAC Grid ───────────────────────────────────────────── */
+.rbac-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.rbac-role-card {
+  padding: var(--space-4);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: all var(--duration-fast);
+}
+
+.rbac-role-card:hover {
+  border-color: var(--brand-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.rbac-role-card.add-role {
+  border-style: dashed;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  color: var(--gray-400);
+}
+
+.rbac-role-card.add-role:hover {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  background: #F0F6FF;
+}
+
+.rbac-role-name {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--gray-900);
+}
+
+.rbac-role-desc {
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.rbac-role-perms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.rbac-role-members {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  font-weight: 600;
+}
+
+/* ── Audit Log ───────────────────────────────────────────── */
+.audit-log { display: flex; flex-direction: column; gap: 0; }
+
+.audit-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--gray-100);
+  transition: background var(--duration-fast);
+}
+
+.audit-entry:last-child { border-bottom: none; }
+.audit-entry:hover { background: var(--gray-50); margin-inline: calc(-1 * var(--space-6)); padding-inline: var(--space-6); }
+
+.audit-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  background: var(--gray-100);
+}
+
+.audit-icon.release  { background: var(--success-light); }
+.audit-icon.kyc      { background: #EFF6FF; }
+.audit-icon.dispute  { background: #F5F3FF; }
+.audit-icon.status   { background: #F0F9FF; }
+.audit-icon.ban      { background: var(--danger-light); }
+.audit-icon.price    { background: var(--warning-light); }
+
+.audit-action {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--gray-800);
+}
+
+.audit-meta {
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.audit-time {
+  font-size: 0.8125rem;
+  color: var(--gray-400);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .rbac-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .rbac-grid { grid-template-columns: 1fr; }
+  .niche-perf-name { min-width: 120px; }
+}
