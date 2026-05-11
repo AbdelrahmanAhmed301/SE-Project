@@ -9,6 +9,8 @@ session_start();
 require_once "../../Controllers/DBcontrollers.php";
 require_once "../../Controllers/post_project.php";
 require_once "../../Models/contract.php";
+require_once "../../Controllers/FreelancerProfileController.php";
+
 
 require_once "../../Models/user.php"; 
 
@@ -34,13 +36,14 @@ $notifications = $db->Select_query("SELECT * FROM notification WHERE user_id = '
 $user_data = $db->Select_query("SELECT * FROM user WHERE user_id = '$current_user_id'");
 $current_user = $user_data[0] ?? null;
 
-
 $my_own_projects = $db->Select_query("SELECT * FROM projects WHERE client_id = '$current_user_id'");
 $contracts = $db->Select_query("
     SELECT c.* FROM contract c 
     JOIN projects p ON c.project_id = p.project_id 
     WHERE p.client_id = '$current_user_id'
 ");
+
+
 
 
 $post_controller = new post_project();
