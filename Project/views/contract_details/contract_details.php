@@ -73,20 +73,13 @@ $user_role = $_SESSION['user_roleid'];
 
         <div class="section-box">
             <h3>Freelancer Tools</h3>
-
             <p>You can submit your work using the button below:</p>
-
             <a href="../../views/submit_work/submit_work.php?project_id=<?php echo $project_id; ?>"
                class="btn btn-primary">
-
                 Submit Work
             </a>
         </div>
-
     <?php endif; ?>
-
-
-
     <?php if ($user_role == 2): ?>
 
         <div class="section-box">
@@ -114,15 +107,11 @@ $user_role = $_SESSION['user_roleid'];
                                 <a href="../../upload/deliveries/<?php echo $file['file_path']; ?>"
                                 download class="btn btn-primary small-btn"> Download File </a>
                                 </td>
-</tr>
+                        </tr>
                         <?php endforeach; ?>
-
                     </tbody>
-
                 </table>
-
             <?php else: ?>
-
                 <p>No files submitted yet.</p>
 
             <?php endif; ?>
