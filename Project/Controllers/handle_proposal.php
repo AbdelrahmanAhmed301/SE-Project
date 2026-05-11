@@ -21,30 +21,28 @@ if ($proposal_id && $status) {
     
         $proposal_data = $db->Select_query("SELECT * FROM proposal WHERE proposal_id = '$proposal_id'");
         
+
         if ($proposal_data) {
             $project_id = $proposal_data[0]['project_id'];
             $freelancer_id = $proposal_data[0]['freelancer_id'];
             $raw_delivery_time = $proposal_data[0]['Delivery_time']; 
 
-        
+            $deadline_date = date("Y-m-d H:i:s", strtotime($raw_delivery_time));
+
             $db->insertquery("UPDATE projects SET status = 'In Progress' WHERE project_id = '$project_id'");
 
-    
             $contract = new contract();
             $contract->project_id = $project_id;
             $contract->freelancer_id = $freelancer_id;
-
-        
-            $clean_time = str_replace('_', ' ', $raw_delivery_time);
-            $contract->deadline = date('Y-m-d', strtotime($clean_time));
-
+            $contract->deadline = $deadline_date; 
             $contract->revision_limits = 3; 
             $contract->revision_used = 0;
             $contract->create_at = date("Y-m-d H:i:s");
 
-        
             $contract_manager = new createcontract();
             $new_id = $contract_manager->create_contract($contract);
+
+        }
 
         
             if ($new_id) {
@@ -57,5 +55,4 @@ if ($proposal_id && $status) {
 
     header("Location: ../views/proposal_request/proposal_request.php?msg=StatusUpdated");
     exit();
-} 
 ?>
