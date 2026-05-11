@@ -1,0 +1,354 @@
+/* ============================================================
+   DISPUTE-RESOLUTION.CSS
+   ============================================================ */
+
+/* ── Alert Banner ────────────────────────────────────────── */
+.dispute-alert-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--danger-light);
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.dispute-alert-icon { font-size: 1.5rem; }
+
+/* ── Dispute Detail Card ─────────────────────────────────── */
+.dispute-detail-card {}
+
+.dispute-header {
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.dispute-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* ── Parties ─────────────────────────────────────────────── */
+.dispute-parties {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.party-card {
+  padding: var(--space-4);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.party-role {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-400);
+}
+
+.party-claim {
+  padding: var(--space-3);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+}
+
+.party-ask {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.vs-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--gray-200);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gray-500);
+  flex-shrink: 0;
+  margin-top: 40px;
+}
+
+/* ── Arbitrator Section ──────────────────────────────────── */
+.arbitrator-section {
+  padding: var(--space-4);
+  background: #F0F9FF;
+  border: 1px solid #BAE6FD;
+  border-radius: var(--radius-lg);
+}
+
+.arbitrator-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.arbitrator-icon { font-size: 1.5rem; }
+
+.arbitrator-schedule {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin-top: var(--space-3);
+}
+
+/* ── Evidence Grid ───────────────────────────────────────── */
+.evidence-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.evidence-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  transition: background var(--duration-fast);
+}
+
+.evidence-item:hover { background: var(--gray-100); }
+
+.evidence-type-icon { font-size: 1.25rem; flex-shrink: 0; }
+
+/* ── Upload Zone ─────────────────────────────────────────── */
+.upload-evidence-zone {
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.upload-evidence-zone:hover {
+  border-color: var(--brand-primary);
+  background: #F0F6FF;
+  color: var(--brand-primary);
+}
+
+/* ── Safe-Room ───────────────────────────────────────────── */
+.saferoom-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: #FFF7ED;
+  border: 1px solid #FED7AA;
+  border-radius: var(--radius-md);
+  color: #92400E;
+  margin-bottom: var(--space-4);
+}
+
+.saferoom-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  max-height: 360px;
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.saferoom-msg { display: flex; }
+.saferoom-msg.client    { justify-content: flex-start; }
+.saferoom-msg.specialist { justify-content: flex-end; }
+.saferoom-msg.arbitrator { justify-content: center; }
+
+.msg-bubble {
+  max-width: 70%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: 0.9375rem;
+}
+
+.saferoom-msg.client .msg-bubble {
+  background: var(--gray-100);
+  border-bottom-left-radius: 4px;
+}
+
+.saferoom-msg.specialist .msg-bubble {
+  background: #EFF6FF;
+  border-bottom-right-radius: 4px;
+}
+
+.saferoom-msg.arbitrator .msg-bubble {
+  background: #F0F9FF;
+  border: 1px solid #BAE6FD;
+  border-radius: var(--radius-lg);
+  max-width: 85%;
+}
+
+.msg-header {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-bottom: var(--space-2);
+}
+
+.msg-text { color: var(--gray-800); line-height: 1.6; }
+
+.saferoom-input-area {
+  border-top: 1px solid var(--gray-200);
+  padding-top: var(--space-4);
+}
+
+/* ── QA Checklist ────────────────────────────────────────── */
+.qa-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.qa-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  border: 1px solid var(--gray-100);
+}
+
+.qa-item.checked {
+  background: var(--success-light);
+  color: #065F46;
+  border-color: #A7F3D0;
+}
+
+.qa-item.checked svg { stroke: var(--success); }
+
+.qa-item.unchecked {
+  background: var(--danger-light);
+  color: #991B1B;
+  border-color: #FECACA;
+}
+
+/* ── Dispute Timeline ────────────────────────────────────── */
+.dispute-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: var(--space-8);
+}
+
+.dispute-timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--gray-200);
+}
+
+.dt-item {
+  position: relative;
+  padding-bottom: var(--space-6);
+  display: flex;
+  gap: var(--space-4);
+}
+
+.dt-item:last-child { padding-bottom: 0; }
+
+.dt-dot {
+  position: absolute;
+  left: -30px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  border: 2px solid var(--white);
+  box-shadow: 0 0 0 1px var(--gray-300);
+  flex-shrink: 0;
+}
+
+.dt-dot.complete { background: var(--success); box-shadow: 0 0 0 1px var(--success); }
+.dt-dot.active   { background: var(--brand-primary); box-shadow: 0 0 0 3px rgba(15,98,254,0.2); }
+.dt-dot.warning  { background: var(--warning); box-shadow: 0 0 0 1px var(--warning); }
+.dt-dot.danger   { background: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
+
+.dt-body {}
+.dt-title { font-weight: 600; color: var(--gray-800); margin-bottom: 2px; }
+.dt-date  { font-size: 0.8125rem; color: var(--gray-500); margin-bottom: var(--space-1); }
+.dt-desc  { font-size: 0.875rem; color: var(--gray-600); line-height: 1.6; }
+
+/* ── Verdict Panel ───────────────────────────────────────── */
+.verdict-panel {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  background: linear-gradient(135deg, #F0FDF4, #EFF6FF);
+  border: 2px solid var(--success);
+  border-radius: var(--radius-xl);
+}
+
+.verdict-header {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  color: var(--gray-900);
+}
+
+.verdict-split {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.verdict-party { text-align: center; }
+.verdict-label { font-size: 0.875rem; color: var(--gray-500); margin-bottom: var(--space-2); }
+
+.verdict-amount {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+}
+
+.verdict-amount.client     { color: var(--success); }
+.verdict-amount.specialist { color: var(--brand-primary); }
+
+.verdict-divider {
+  width: 1px;
+  height: 60px;
+  background: var(--gray-300);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .dispute-parties {
+    grid-template-columns: 1fr;
+  }
+  .vs-badge { display: none; }
+  .verdict-split { grid-template-columns: 1fr 1fr; }
+  .verdict-divider { display: none; }
+  .msg-bubble { max-width: 90%; }
+}
