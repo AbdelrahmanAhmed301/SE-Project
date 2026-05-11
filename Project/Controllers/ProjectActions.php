@@ -13,8 +13,4 @@ class ProjectModel {
         return $this->db->Select_query($sql);
     }
 
-    public function updateProjectStatus($id, $status) {
-        $sql = "UPDATE Projects SET status = '$status' WHERE project_id = $id";
-        return $this->db->insertquery($sql);
-    }
 }
