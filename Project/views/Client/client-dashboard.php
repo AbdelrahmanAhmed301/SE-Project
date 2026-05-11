@@ -12,6 +12,18 @@ require_once "../../Models/contract.php";
 
 require_once "../../Models/user.php"; 
 
+if (!isset($_SESSION["userid"])) {
+    header("Location: ../../views/Auth/login.php");
+    exit();
+}
+
+
+if ($_SESSION["user_roleid"] != 2) {
+
+    header("Location: ../../views/Auth/login.php");
+    exit();
+}
+
 
 $db = DBcontrollers::getInstance(); 
 
@@ -225,50 +237,8 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
     <?php else: ?>
         <p>No new notifications.</p>
     <?php endif; ?>
-    </div>
-  </div>
-</div> -->
 
 
-<!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Worklio</h3>
-                    <p>The marketplace for specialized professional services</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="../../views/main_pages/about.php">About Us</a></li>
-                        <li><a href="../../views/Auth/login.php">How It Works</a></li>
-                        <li><a href="../../views/main_pages/Contact.php">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>For Clients</h4>
-                    <ul>
-                        <li><a href="../../Auth/login.php">Post a Project</a></li>
-                        <li><a href="../../Auth/login.php">Browse Specialists</a></li>
-                        <li><a href="#">Pricing</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>For Freelancers</h4>
-                    <ul>
-                        <li><a href="../../views/Auth/login.php">Find Work</a></li>
-                        <li><a href="../../views/Auth/login.php">Get Verified</a></li>
-                        <li><a href="#">Resources</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Worklio. All rights reserved.</p>
-            </div>
-        </div>
-
-    </footer>
 
 <script src="/Project/public/assets/js/client-dashboard.js"></script>
 </body>
