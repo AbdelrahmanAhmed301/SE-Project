@@ -6,19 +6,6 @@
 session_start();
 
 
-
-
-if (!isset($_SESSION["userid"])) {
-    header("Location: ../../views/Auth/login.php");
-    exit();
-}
-
-if ($_SESSION["user_roleid"] != 2) {
-    
-    header("Location: ../../views/Auth/login.php");
-    exit();
-}
-
 require_once "../../Controllers/DBcontrollers.php";
 require_once "../../Controllers/post_project.php";
 require_once "../../Models/contract.php";
