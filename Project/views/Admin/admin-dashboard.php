@@ -1,3 +1,34 @@
+<?php
+session_start();
+
+// if ($_SESSION["user_roleid"] != 2 || $_SESSION["user_roleid"]!=3) {
+    
+//     header("Location: ../../views/Auth/login.php");
+//     exit();
+// }
+
+require_once __DIR__ . "/../../Controllers/AdminDashboardController.php";
+require_once __DIR__ . "/../../Models/user.php";
+
+$db = DBcontrollers::getInstance(); 
+$admin_controller=new AdminDashboardController();
+
+$total_user=$admin_controller->get_num_users();
+
+$total_project=$admin_controller->get_num_project();
+$all_user=$admin_controller->get_all_users();
+$all_project=$admin_controller->getAllProjects();
+
+$user_stats = $admin_controller->get_specify_user();
+
+$all_admin      = $user_stats['admin_count'];
+$all_client     = $user_stats['client_count'] ;
+$all_freelancer = $user_stats['freelancer_count'] ;
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -85,11 +116,7 @@
         <span class="stat-label">Total Users</span>
         <span class="stat-ico" style="background:rgba(79,142,247,.12);color:#4f8ef7">◉</span>
       </div>
-      <div class="stat-value">3,284</div>
-      <div class="stat-row">
-        <span class="chip chip-up">▲ 12.4%</span>
-        <span class="stat-hint">vs last month</span>
-      </div>
+      <div class="stat-value"><?php echo $total_user?></div>
       <div class="stat-bar">
         <div class="stat-fill" style="width:74%;background:#4f8ef7"></div>
       </div>
@@ -100,11 +127,7 @@
         <span class="stat-label">Active Projects</span>
         <span class="stat-ico" style="background:rgba(34,200,122,.12);color:#22c87a">▣</span>
       </div>
-      <div class="stat-value">128</div>
-      <div class="stat-row">
-        <span class="chip chip-up">▲ 8.1%</span>
-        <span class="stat-hint">vs last month</span>
-      </div>
+      <div class="stat-value"><?php echo $total_project ?></div>
       <div class="stat-bar">
         <div class="stat-fill" style="width:58%;background:#22c87a"></div>
       </div>
@@ -116,10 +139,6 @@
         <span class="stat-ico" style="background:rgba(245,158,11,.12);color:#f59e0b">◈</span>
       </div>
       <div class="stat-value">$842K</div>
-      <div class="stat-row">
-        <span class="chip chip-up">▲ 21.3%</span>
-        <span class="stat-hint">in escrow + released</span>
-      </div>
       <div class="stat-bar">
         <div class="stat-fill" style="width:88%;background:#f59e0b"></div>
       </div>
@@ -161,7 +180,7 @@
           <div class="ut-bar-wrap">
             <div class="ut-bar" style="width:68%;background:#4f8ef7"></div>
           </div>
-          <strong>1,940</strong>
+          <strong><?php echo $all_client ?></strong>
         </div>
         <div class="user-type-row">
           <div class="ut-left">
@@ -171,7 +190,7 @@
           <div class="ut-bar-wrap">
             <div class="ut-bar" style="width:52%;background:#22c87a"></div>
           </div>
-          <strong>1,220</strong>
+          <strong><?php echo $all_freelancer?></strong>
         </div>
         <div class="user-type-row">
           <div class="ut-left">
@@ -181,7 +200,7 @@
           <div class="ut-bar-wrap">
             <div class="ut-bar" style="width:6%;background:#a8b4c8"></div>
           </div>
-          <strong>124</strong>
+          <strong><?php $all_admin ?></strong>
         </div>
       </div>
 
@@ -308,12 +327,10 @@
       </div>
 
     </div><!-- /right-col -->
-  </div><!-- /row-2 -->
+  </div>
 
-  <!-- ═══ BOTTOM ROW ═══ -->
+
   <div class="row-3">
-
-    <!-- Recent Transactions -->
     <div class="card">
       <div class="card-head">
         <h2 class="card-title">Recent Transactions</h2>
@@ -356,7 +373,6 @@
       </table>
     </div>
 
-    <!-- Milestone Status -->
     <div class="card milestone-card">
       <div class="card-head">
         <h2 class="card-title">Milestone Status</h2>
