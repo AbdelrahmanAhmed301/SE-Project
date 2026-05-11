@@ -1,30 +1,49 @@
 <?php
 session_start();
 
-// if ($_SESSION["user_roleid"] != 2 || $_SESSION["user_roleid"]!=3) {
-    
-//     header("Location: ../../views/Auth/login.php");
-//     exit();
-// }
-
+// 1. استدعاء الملفات الضرورية مرة واحدة فقط
 require_once __DIR__ . "/../../Controllers/AdminDashboardController.php";
+require_once __DIR__ . "/../../Controllers/FreelancerProfileController.php";
 require_once __DIR__ . "/../../Models/user.php";
 
 $db = DBcontrollers::getInstance(); 
-$admin_controller=new AdminDashboardController();
 
-$total_user=$admin_controller->get_num_users();
+// 2. تعريف الكنترولرز مرة واحدة
+$admin_controller = new AdminDashboardController();
+$profile_ctrl = new FreelancerProfileController();
 
-$total_project=$admin_controller->get_num_project();
-$all_user=$admin_controller->get_all_users();
-$all_project=$admin_controller->getAllProjects();
+// 3. معالجة قرارات الأدمن (Approve/Reject) أولاً
+if (isset($_GET['approve_doc']) && isset($_GET['f_id'])) {
+    $doc_id = $_GET['approve_doc'];
+    $f_id = $_GET['f_id'];
+    
+    // تنفيذ عملية التوثيق
+    $profile_ctrl->adminReviewDocument($doc_id, $f_id, 'approved', 'Verified by Admin');
+    
+    // توجيه الصفحة لنفسها لمسح بيانات الـ GET من الرابط وتحديث البيانات
+    header("Location: admin-dashboard.php?success=1");
+    exit();
+}
+
+// 4. جلب البيانات والإحصائيات بعد معالجة أي تغييرات
+$total_user = $admin_controller->get_num_users();
+$total_project = $admin_controller->get_num_project();
+$all_user = $admin_controller->get_all_users();
+$all_project = $admin_controller->getAllProjects();
 
 $user_stats = $admin_controller->get_specify_user();
-
 $all_admin      = $user_stats['admin_count'];
-$all_client     = $user_stats['client_count'] ;
-$all_freelancer = $user_stats['freelancer_count'] ;
+$all_client     = $user_stats['client_count'];
+$all_freelancer = $user_stats['freelancer_count'];
 
+// جلب المستندات المعلقة لعرضها في الجدول
+// جلب الملفات مع التأكد من اسم عمود المستخدم (غالباً username في مشروعك)
+$pending_docs = $db->Select_query("
+    SELECT d.*, u.username as name 
+    FROM freelancer_documents d 
+    JOIN user u ON d.freelancer_id = u.user_id 
+    WHERE d.status = 'pending'
+");
 ?>
 
 
@@ -328,6 +347,44 @@ $all_freelancer = $user_stats['freelancer_count'] ;
 
     </div><!-- /right-col -->
   </div>
+  <section class="card" style="margin-top: 20px;">
+    <div class="card-header">
+        <div class="card-title">Pending Document Verifications</div>
+    </div>
+    <div style="padding: 20px;">
+        <?php if (!empty($pending_docs)): ?>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f4f4f4; text-align: left;">
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Freelancer</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Type</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Document</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pending_docs as $doc): ?>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo htmlspecialchars($doc['name']); ?></td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo htmlspecialchars($doc['document_type']); ?></td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                                <a href="<?php echo htmlspecialchars($doc['document_path']); ?>" target="_blank" style="color: #4f8ef7; text-decoration: none;">View File</a>
+                            </td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                                <a href="admin-dashboard.php?approve_doc=<?php echo $doc['document_id']; ?>&f_id=<?php echo $doc['freelancer_id']; ?>" 
+                                   style="background: #22c87a; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 12px;">
+                                   Approve
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p style="color: #666; text-align: center;">No pending documents to review.</p>
+        <?php endif; ?>
+    </div>
+</section>
 
 
   <div class="row-3">
