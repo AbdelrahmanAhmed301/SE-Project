@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_project"])) {
         $project = new project();
         $project->title = $_POST["title"];
         $project->description = $_POST["description"];
-        $project->milestones = $_POST["milestones"];
+        $project->Tools = $_POST["Tools"];
         $project->budget = $_POST["budget"];
         $project->client_id = $_SESSION["userid"]; 
 
@@ -56,7 +56,7 @@ if ($post_controller->post_project($project)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>publish project</title>
-    <link rel="stylesheet" href="/Project/public/assets/css/client-dashboard.css">
+    <link rel="stylesheet" href="../../public/assets/css/project_details.css">
 </head>
 <body>
     <form action="project_details.php" method="POST">
@@ -69,8 +69,8 @@ if ($post_controller->post_project($project)) {
                             <textarea name="description" class="form-textarea" placeholder="Provide details..." required></textarea>
                         </div>
                         <div class="form-group">
-                    <label class="form-label">Milestones</label>
-                            <input type="text" name="milestones" class="form-input" placeholder="Milestones...." required>>
+                    <label class="form-label">Tools</label>
+                            <input type="text" name="Tools" class="form-input" placeholder="Tools...." required>
                 </div>
                         <div class="form-group">
                             <label class="form-label">Budget ($)</label>
