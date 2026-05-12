@@ -43,7 +43,7 @@ public function register(user $user){
             $_SESSION["userid"] = $res[0]["user_id"];
             $_SESSION["username"] = $user->username;
             $_SESSION["user_roleid"] = $user->role_id;
-            // -------------------------
+        
             return true;
         }
     }
