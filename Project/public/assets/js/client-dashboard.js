@@ -143,4 +143,28 @@ function close_modal(id){
     document.getElementById(id).classList.remove("active");
 }
 
+function showSection(sectionName, element){
+
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+
+    document.getElementById('section-' + sectionName).style.display = 'block';
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    element.classList.add('active');
+}
+
+
+function open_modal(id){
+    document.getElementById(id).classList.add('active');
+}
+
+function close_modal(id){
+    document.getElementById(id).classList.remove('active');
+}
+
 
