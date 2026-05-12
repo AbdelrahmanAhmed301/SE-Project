@@ -27,8 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if(!empty($skill_data)) {
                 $skill_name = $skill_data[0]['skill_name'];
 
-                $db->insertquery("INSERT INTO freelancer_skills (freelancer_id, skill_id, skill_name, bio) 
-                                VALUES ('$user_id', '$skill_id', '$skill_name', '$bio')");
+                            $db->insertquery("
+                    INSERT INTO freelancer_profiles (user_id, bio)
+                    VALUES ('$user_id', '$bio')
+                    ON DUPLICATE KEY UPDATE
+                    bio = '$bio'
+                ");
             }
         }
     }
