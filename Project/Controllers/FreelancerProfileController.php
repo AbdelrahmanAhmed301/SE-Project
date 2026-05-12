@@ -13,14 +13,13 @@ class FreelancerProfileController {
     public function __construct() {
         $this->db = DBcontrollers::getInstance();
     }
-
-    // ══════════════════════════════════════════════════════════════
-    // FUNCTION 1 — Credential Verification Workflow
-    // ══════════════════════════════════════════════════════════════
-
-    /**
-     * Submit documents for verification (freelancer action)
-     */
+    public function someAction($userId) {
+         $db = DBcontrollers::getInstance();
+        if (user::isBanned($userId, $db)) {
+                die ("Error: Your account is restricted.");
+        exit();
+    }
+}
     public function submitVerificationDocument($freelancer_id, $document_type, $document_path) {
         $freelancer_id  = $this->db->connection->real_escape_string($freelancer_id);
         $document_type  = $this->db->connection->real_escape_string($document_type);
@@ -126,7 +125,6 @@ class FreelancerProfileController {
         if (empty($data)) return null;
         $profile = $data[0];
 
-        // تطبيق منطق الخصوصية (Privacy Logic)
         if (!$profile['show_earnings'] && $viewer_id != $freelancer_id) {
             $profile['total_earnings'] = "Hidden"; 
         }
@@ -140,4 +138,57 @@ class FreelancerProfileController {
         $this->db->insertquery("INSERT INTO freelancer_skills (freelancer_id, skill_id) VALUES ('$freelancer_id', '$skill_id')");
     }
 }
+public function hasCompletedProfile($user_id){
+
+    $db = DBcontrollers::getInstance();
+
+    $result = $db->Select_query("
+        SELECT *
+        FROM freelancer_profiles
+        WHERE user_id = '$user_id'
+        AND bio IS NOT NULL
+        AND bio != ''
+    ");
+
+    return !empty($result);
+}
+
+public function adminCompleteProject($project_id, $freelancer_id, $rating) {
+    $project_id = $this->db->connection->real_escape_string($project_id);
+    $freelancer_id = $this->db->connection->real_escape_string($freelancer_id);
+    $rating = intval($rating);
+
+    $updateProject = $this->db->insertquery("
+        UPDATE projects 
+        SET status = 'Completed', 
+            admin_rating = '$rating' 
+        WHERE project_id = '$project_id'
+    ");
+
+    if ($updateProject) {
+    
+        $stats = $this->db->Select_query("
+            SELECT AVG(p.admin_rating) as avg_rating, COUNT(p.project_id) as total 
+            FROM projects p
+            JOIN proposal pr ON p.project_id = pr.project_id
+            WHERE pr.freelancer_id = '$freelancer_id' 
+            AND p.status = 'Completed' 
+            AND p.admin_rating IS NOT NULL
+        ");
+
+        if (!empty($stats)) {
+            $new_avg = $stats[0]['avg_rating'];
+            $new_total = $stats[0]['total'];
+
+            $this->db->insertquery("
+                UPDATE freelancer_profiles 
+                SET rating_avg = '$new_avg', 
+                    total_reviews = '$new_total' 
+                WHERE user_id = '$freelancer_id'
+            ");
+        }
+    }
+    return $updateProject;
+}
+
 }
