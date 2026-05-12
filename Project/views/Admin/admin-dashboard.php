@@ -8,24 +8,34 @@ require_once __DIR__ . "/../../Models/user.php";
 
 $db = DBcontrollers::getInstance(); 
 
-// 2. تعريف الكنترولرز مرة واحدة
 $admin_controller = new AdminDashboardController();
 $profile_ctrl = new FreelancerProfileController();
 
-// 3. معالجة قرارات الأدمن (Approve/Reject) أولاً
 if (isset($_GET['approve_doc']) && isset($_GET['f_id'])) {
     $doc_id = $_GET['approve_doc'];
     $f_id = $_GET['f_id'];
-    
-    // تنفيذ عملية التوثيق
+
     $profile_ctrl->adminReviewDocument($doc_id, $f_id, 'approved', 'Verified by Admin');
-    
-    // توجيه الصفحة لنفسها لمسح بيانات الـ GET من الرابط وتحديث البيانات
+
     header("Location: admin-dashboard.php?success=1");
     exit();
 }
 
-// 4. جلب البيانات والإحصائيات بعد معالجة أي تغييرات
+if (isset($_GET['delete_freelancer'])) {
+    $delete = $_GET['delete_freelancer'];
+    $admin_controller->deleteUser($delete);
+    
+    header("Location: admin-dashboard.php?deleted=1");
+    exit();
+}
+
+if (isset($_GET['ban_user'])) {
+    $u_id = $_GET['ban_user'];
+    $admin_controller->sanctionUser($u_id, 'Banned');
+    header("Location: admin-dashboard.php?action=banned");
+    exit();
+}
+
 $total_user = $admin_controller->get_num_users();
 $total_project = $admin_controller->get_num_project();
 $all_user = $admin_controller->get_all_users();
@@ -36,21 +46,27 @@ $all_admin      = $user_stats['admin_count'];
 $all_client     = $user_stats['client_count'];
 $all_freelancer = $user_stats['freelancer_count'];
 
-// جلب المستندات المعلقة لعرضها في الجدول
-// جلب الملفات مع التأكد من اسم عمود المستخدم (غالباً username في مشروعك)
 $pending_docs = $db->Select_query("
     SELECT d.*, u.username as name 
     FROM freelancer_documents d 
     JOIN user u ON d.freelancer_id = u.user_id 
     WHERE d.status = 'pending'
 ");
+
+$recent_projects = $admin_controller->getRecentProjects(4);
+
+$total_budget = $admin_controller->getTotalBudget();
+$system_activities = $admin_controller->getSystemLogs(4);
+
+$proposal_stats = $admin_controller->getProposalsStats();
+$recent_proposals = $admin_controller->getRecentProposals(5);
 ?>
 
 
 
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -158,7 +174,7 @@ $pending_docs = $db->Select_query("
         <span class="stat-label">Total Budget</span>
         <span class="stat-ico" style="background:rgba(245,158,11,.12);color:#f59e0b">◈</span>
       </div>
-      <div class="stat-value">$842K</div>
+      <div class="stat-value">$<?php echo number_format($total_budget / 1000, 1); ?>K<</div>
       <div class="stat-bar">
         <div class="stat-fill" style="width:88%;background:#f59e0b"></div>
       </div>
@@ -220,7 +236,7 @@ $pending_docs = $db->Select_query("
           <div class="ut-bar-wrap">
             <div class="ut-bar" style="width:6%;background:#a8b4c8"></div>
           </div>
-          <strong><?php $all_admin ?></strong>
+          <strong><?php echo $all_admin ?></strong>
         </div>
       </div>
 
@@ -234,40 +250,61 @@ $pending_docs = $db->Select_query("
       </div>
 
       <!-- mini user table -->
-      <table class="mini-table">
-        <thead>
-          <tr>
-            <th>Name</th><th>Role</th><th>Status</th><th>Joined</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><div class="user-cell"><div class="av av-blue">AH</div><span>Ahmed Hassan</span></div></td>
-            <td><span class="tag tag-blue">Client</span></td>
-            <td><span class="dot-green"></span> Active</td>
-            <td class="muted">Jan 12, 2026</td>
-          </tr>
-          <tr>
-            <td><div class="user-cell"><div class="av av-green">SR</div><span>Sara Radwan</span></div></td>
-            <td><span class="tag tag-green">Freelancer</span></td>
-            <td><span class="dot-green"></span> Active</td>
-            <td class="muted">Feb 4, 2026</td>
-          </tr>
-          <tr>
-            <td><div class="user-cell"><div class="av av-amber">KM</div><span>Karim Mostafa</span></div></td>
-            <td><span class="tag tag-green">Freelancer</span></td>
-            <td><span class="dot-warn"></span> Pending</td>
-            <td class="muted">Mar 19, 2026</td>
-          </tr>
-          <tr>
-            <td><div class="user-cell"><div class="av av-red">NN</div><span>Nour Nabil</span></div></td>
-            <td><span class="tag tag-blue">Client</span></td>
-            <td><span class="dot-red"></span> Suspended</td>
-            <td class="muted">Apr 2, 2026</td>
-          </tr>
-        </tbody>
-      </table>
+      <section class="card" style="margin-top: 20px;">
+    <div class="card-head">
+        <h2 class="card-title">  (User Management)</h2>
     </div>
+    <div style="padding: 20px;">
+        <table class="mini-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>email </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+    <?php 
+    if ($all_user):
+        foreach ($all_user as $user): 
+
+            if ($user['role_id'] != 1): ?>
+            <tr>
+                <td>
+                    <div class="user-cell">
+                        <div class="av <?php echo ($user['role_id'] == 3) ? 'av-green' : 'av-blue'; ?>">
+                            <?php echo substr($user['username'], 0, 2); ?>
+                        </div>
+                        <span>
+                            <?php echo htmlspecialchars($user['username']); ?>
+                            <small style="display:block; color:#888; font-size:10px;">
+                                <?php echo ($user['role_id'] == 3) ? 'Freelancer' : 'Client'; ?>
+                            </small>
+                        </span>
+                    </div>
+                </td>
+                <td><?php echo htmlspecialchars($user['email']); ?></td>
+                <td>
+                    <a href="admin-dashboard.php?delete_freelancer=<?php echo $user['user_id']; ?>" 
+                       onclick="return confirm(' are you sure want delete ?');"
+                      style="background: #ef4444; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block;">
+                        delete
+                    </a>
+                    <a href="admin-dashboard.php?ban_user=<?php echo $user['user_id']; ?>" 
+   onclick="return confirm(' BaN ');"
+   style="background: #1f2937; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 12px;">
+   Ban
+</a>
+                </td>
+            </tr>
+        <?php 
+            endif;
+        endforeach; 
+    endif; ?>
+</tbody>
+        </table>
+    </div>
+</section>
 
     <!-- Right column -->
     <div class="right-col">
@@ -278,74 +315,41 @@ $pending_docs = $db->Select_query("
           <h2 class="card-title">Projects Overview</h2>
           <span class="card-link">See all →</span>
         </div>
-        <div class="proj-grid">
-          <div class="proj-num" style="border-color:#22c87a">
-            <span style="color:#22c87a">64</span><small>Active</small>
-          </div>
-          <div class="proj-num" style="border-color:#f59e0b">
-            <span style="color:#f59e0b">38</span><small>In Review</small>
-          </div>
-          <div class="proj-num" style="border-color:#4f8ef7">
-            <span style="color:#4f8ef7">19</span><small>Completed</small>
-          </div>
-          <div class="proj-num" style="border-color:#ef4444">
-            <span style="color:#ef4444">7</span><small>Cancelled</small>
-          </div>
-        </div>
-        <div class="budget-block">
-          <div class="budget-row">
-            <span>Total Budget</span><strong>$842,300</strong>
-          </div>
-          <div class="budget-row">
-            <span>In Escrow</span><strong class="clr-amber">$314,000</strong>
-          </div>
-          <div class="budget-row">
-            <span>Released</span><strong class="clr-green">$528,300</strong>
-          </div>
-        </div>
-      </div>
-
+        <div class="card">
+    <div class="card-head">
+        <h2 class="card-title">Recent Projects</h2>
+        <span class="card-link">See all →</span>
+    </div>
+    <div class="proj-list" style="padding: 10px;">
+        <?php if($recent_projects): foreach($recent_projects as $proj): ?>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                <div>
+                    <div style="font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($proj['title']); ?></div>
+                    <small style="color: #666;">Client: <?php echo htmlspecialchars($proj['client_name']); ?></small>
+                </div>
+                <div style="text-align: right;">
+                    <span class="tag <?php echo ($proj['status'] == 'active') ? 'tag-green' : 'tag-amber'; ?>">
+                        <?php echo $proj['status']; ?>
+                    </span>
+                    <div style="font-weight: bold; margin-top: 4px;">$<?php echo number_format($proj['budget']); ?></div>
+                </div>
+            </div>
+        <?php endforeach; else: ?>
+            <p>No projects found.</p>
+        <?php endif; ?>
+    </div>
+</div>
       <!-- Alerts -->
-      <div class="card">
-        <div class="card-head">
-          <h2 class="card-title">Needs Action</h2>
-        </div>
-        <div class="alert-list">
-          <div class="alert-item">
-            <div class="alert-ico" style="background:rgba(239,68,68,.12)">⬡</div>
-            <div class="alert-body">
-              <div class="alert-title">Dispute #D-0041 — Fund Split Pending</div>
-              <div class="alert-sub">Project: UI Redesign · 2h ago</div>
-            </div>
-            <button class="act-btn">Resolve</button>
-          </div>
-          <div class="alert-item">
-            <div class="alert-ico" style="background:rgba(245,158,11,.12)">◉</div>
-            <div class="alert-body">
-              <div class="alert-title">KYC Verification Failed — Freelancer #F-0217</div>
-              <div class="alert-sub">Identity Mgmt · 5h ago</div>
-            </div>
-            <button class="act-btn">Review</button>
-          </div>
-          <div class="alert-item">
-            <div class="alert-ico" style="background:rgba(79,142,247,.12)">◈</div>
-            <div class="alert-body">
-              <div class="alert-title">Payout #P-0088 Cooling-Off Complete</div>
-              <div class="alert-sub">Financial Escrow · 1h ago</div>
-            </div>
-            <button class="act-btn act-green">Approve</button>
-          </div>
-          <div class="alert-item">
-            <div class="alert-ico" style="background:rgba(239,68,68,.12)">▽</div>
-            <div class="alert-body">
-              <div class="alert-title">Scope Creep Amendment — needs bilateral sign</div>
-              <div class="alert-sub">Project #PRJ-0074 · 3h ago</div>
-            </div>
-            <button class="act-btn">View</button>
-          </div>
-        </div>
-      </div>
-
+      <div class="stat-card" style="--accent-clr:#f59e0b">
+  <div class="stat-top">
+    <span class="stat-label">Total Projects Value</span>
+    <span class="stat-ico" style="background:rgba(245,158,11,.12);color:#f59e0b">◈</span>
+  </div>
+  <div class="stat-value">$<?php echo number_format($total_budget / 1000, 1); ?>K</div>
+  <div class="stat-bar">
+    <div class="stat-fill" style="width:85%;background:#f59e0b"></div>
+  </div>
+</div>
     </div><!-- /right-col -->
   </div>
   <section class="card" style="margin-top: 20px;">
@@ -388,104 +392,108 @@ $pending_docs = $db->Select_query("
 </section>
 
 
-  <div class="row-3">
-    <div class="card">
-      <div class="card-head">
-        <h2 class="card-title">Recent Transactions</h2>
-        <span class="card-link">Full ledger →</span>
-      </div>
-      <table class="mini-table">
-        <thead>
-          <tr><th>TX ID</th><th>Project</th><th>Amount</th><th>Currency</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="mono">#TX-9921</td>
-            <td>API Integration</td>
-            <td class="clr-green">+$1,200</td>
-            <td><span class="tag tag-blue">USD</span></td>
-            <td><span class="dot-green"></span> Cleared</td>
-          </tr>
-          <tr>
-            <td class="mono">#TX-9920</td>
-            <td>Mobile App Design</td>
-            <td class="clr-amber">$800</td>
-            <td><span class="tag tag-amber">EUR</span></td>
-            <td><span class="dot-warn"></span> Pending</td>
-          </tr>
-          <tr>
-            <td class="mono">#TX-9918</td>
-            <td>Brand Identity</td>
-            <td class="clr-green">+$3,500</td>
-            <td><span class="tag tag-blue">USD</span></td>
-            <td><span class="dot-green"></span> Cleared</td>
-          </tr>
-          <tr>
-            <td class="mono">#TX-9915</td>
-            <td>SEO Audit</td>
-            <td class="clr-red">-$200</td>
-            <td><span class="tag tag-green">GBP</span></td>
-            <td><span class="dot-red"></span> Refunded</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="stat-card" style="--accent-clr:#8b5cf6">
+  <div class="stat-top">
+    <span class="stat-label">Total Proposals Sent</span>
+    <span class="stat-ico" style="background:rgba(139,92,246,.12);color:#8b5cf6">✉</span>
+  </div>
+  <div class="stat-value"><?php echo $proposal_stats['total_proposals']; ?></div>
+  <div class="stat-bar">
+    <div class="stat-fill" style="width:100%;background:#8b5cf6"></div>
+  </div>
+  <div style="font-size: 11px; margin-top: 5px; color: #666;">
+    <span style="color:#22c55e">● <?php echo $proposal_stats['accepted_count']; ?> Accepted</span> | 
+    <span style="color:#f59e0b">● <?php echo $proposal_stats['pending_count']; ?> Pending</span>
+  </div>
+</div>
 
-    <div class="card milestone-card">
-      <div class="card-head">
-        <h2 class="card-title">Milestone Status</h2>
-      </div>
-      <div class="ms-list">
-        <div class="ms-row">
-          <div class="ms-info">
-            <span class="ms-name">Mobile App — Phase 2</span>
-            <span class="ms-date muted">Due May 14</span>
-          </div>
-          <div class="ms-prog-wrap">
-            <div class="ms-prog" style="width:72%;background:#4f8ef7"></div>
-          </div>
-          <span class="ms-pct">72%</span>
-          <span class="tag tag-blue">In Progress</span>
-        </div>
-        <div class="ms-row">
-          <div class="ms-info">
-            <span class="ms-name">Brand Identity — Delivery</span>
-            <span class="ms-date muted">Due May 11</span>
-          </div>
-          <div class="ms-prog-wrap">
-            <div class="ms-prog" style="width:100%;background:#22c87a"></div>
-          </div>
-          <span class="ms-pct">100%</span>
-          <span class="tag tag-green">Completed</span>
-        </div>
-        <div class="ms-row">
-          <div class="ms-info">
-            <span class="ms-name">API Integration — Phase 1</span>
-            <span class="ms-date clr-red">Overdue</span>
-          </div>
-          <div class="ms-prog-wrap">
-            <div class="ms-prog" style="width:40%;background:#ef4444"></div>
-          </div>
-          <span class="ms-pct">40%</span>
-          <span class="tag tag-red">Delayed</span>
-        </div>
-        <div class="ms-row">
-          <div class="ms-info">
-            <span class="ms-name">SEO Audit — Report</span>
-            <span class="ms-date muted">Due May 20</span>
-          </div>
-          <div class="ms-prog-wrap">
-            <div class="ms-prog" style="width:25%;background:#f59e0b"></div>
-          </div>
-          <span class="ms-pct">25%</span>
-          <span class="tag tag-amber">Review</span>
-        </div>
-      </div>
+    <section class="card" style="margin-top: 20px;">
+    <div class="card-head">
+        <h2 class="card-title">Recent Proposals Overview</h2>
     </div>
-
+    <div style="padding: 20px;">
+        <table class="mini-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Freelancer</th>
+                    <th>Project</th>
+                    <th>Bid Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if($recent_proposals): foreach($recent_proposals as $prop): ?>
+                    <tr>
+                        <td><strong><?php echo htmlspecialchars($prop['freelancer_name']); ?></strong></td>
+                        <td><?php echo htmlspecialchars($prop['project_title']); ?></td>
+                        <td>$<?php echo number_format($prop['bid_amount']); ?></td>
+                        <td>
+                            <span class="tag <?php 
+                                echo ($prop['status'] == 'Accepted') ? 'tag-green' : 
+                                    (($prop['status'] == 'Pending') ? 'tag-amber' : 'tag-red'); 
+                            ?>">
+                                <?php echo $prop['status']; ?>
+                            </span>
+                        </td>
+                        <td>
+    <small>
+        <?php 
+        echo isset($prop['created_at']) ? date('M d, Y', strtotime($prop['created_at'])) : 'Recently'; 
+        ?>
+    </small>
+</td>
+                    </tr>
+                <?php endforeach; else: ?>
+                    <tr><td colspan="5" style="text-align:center;">No proposals sent yet.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
   </div><!-- /row-3 -->
 
 </main><!-- /main -->
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-box input');
+    const rows = document.querySelectorAll('.mini-table tbody tr');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+
+    // 1. Live Search Logic
+    searchInput.addEventListener('keyup', function() {
+        const query = this.value.toLowerCase();
+        rows.forEach(row => {
+            const name = row.querySelector('td:first-child span').textContent.toLowerCase();
+            const email = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            row.style.display = (name.includes(query) || email.includes(query)) ? '' : 'none';
+        });
+    });
+
+    // 2. Dynamic Filtering Logic
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update active class
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const filterType = this.textContent.trim().toLowerCase();
+            
+            rows.forEach(row => {
+                const role = row.querySelector('small').textContent.trim().toLowerCase();
+                if (filterType === 'all' || role === filterType.slice(0, -1)) { // slice to handle 's' in Freelancers
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
 
 </body>
 </html>
