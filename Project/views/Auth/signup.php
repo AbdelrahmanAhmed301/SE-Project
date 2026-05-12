@@ -1,50 +1,102 @@
 <?php
-
 session_start();
 require_once "../../Models/user.php";
 require_once "../../Controllers/authcontroller.php";
+require_once "../../Controllers/DBcontrollers.php";
 
 $err_msg = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if ( !empty($_POST["Username"]) &&!empty($_POST["email"]) &&!empty($_POST["password"]) && !empty($_POST["role"])
+    $username = trim($_POST["Username"] ?? '');
+    $email    = trim($_POST["email"] ?? '');
+    $password = trim($_POST["password"] ?? '');
+    $role     = trim($_POST["role"] ?? '');
+    if (
+        !empty($username) &&
+        !empty($email) &&
+        !empty($password) &&
+        !empty($role)
     ) {
 
-        $user = new user();
-        $auth = new authcontrollers();
+        $db = DBcontrollers::getInstance();
 
-        $user->username = $_POST["Username"];
-        $user->email = $_POST["email"];
-        $user->password_hash = $_POST["password"];
+        $check_email = $db->Select_query("
+            SELECT email
+            FROM user
+            WHERE email = '$email'
+        ");
 
-        if ($_POST["role"] == "client") {
-            $user->role_id = 2;
+        if (!empty($check_email)) {
+
+            $err_msg = "Email already exists";
+
         } else {
-            $user->role_id = 3;
-        }
 
-        if ($auth->register($user)) {
+            $user = new user();
+            $auth = new authcontrollers();
 
-            if ($user->role_id == 2) {
-                header("Location: ../../views/Client/client-dashboard.php");
-                exit();
+            $user->username = htmlspecialchars($username);
+            $user->email = htmlspecialchars($email);
+
+            $user->password_hash = password_hash(
+                $password,
+                PASSWORD_DEFAULT
+            );
+
+            if ($role == "client") {
+
+                $user->role_id = 2;
+
             } else {
-                header("Location: ../../views/Freelancer/freelancer-dashboard.php");
-                exit();
+
+                $user->role_id = 3;
             }
 
-        } else {
-            echo "Registration failed";
+            if ($auth->register($user)) {
+
+                session_regenerate_id(true);
+
+                $new_user = $db->Select_query("
+                    SELECT *
+                    FROM user
+                    WHERE email = '$email'
+                    LIMIT 1
+                ");
+
+                if (!empty($new_user)) {
+
+                    $_SESSION["userid"] = $new_user[0]["user_id"];
+                    $_SESSION["username"] = $new_user[0]["username"];
+                    $_SESSION["user_roleid"] = $new_user[0]["role_id"];
+
+                    if ($new_user[0]["role_id"] == 2) {
+
+                        header("Location: ../../views/Client/client-dashboard.php");
+                        exit();
+                    }
+
+                    // FREELANCER
+                    elseif ($new_user[0]["role_id"] == 3) {
+
+                        header("Location: ../../views/onboarding/onboarding.php");
+                        exit();
+                    }
+                }
+
+            } else {
+
+                $err_msg = "Registration failed";
+            }
         }
 
     } else {
-        echo "Please fill all fields";
+
+        $err_msg = "Please fill all fields";
     }
-
 }
-?>
 
+?>
 
 <!DOCTYPE html>
 <html>
