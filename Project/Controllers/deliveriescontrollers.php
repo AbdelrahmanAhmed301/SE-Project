@@ -10,6 +10,13 @@ class deliveriescontrollers {
     public function __construct() {
         $this->db = DBcontrollers::getInstance();
     }
+    public function someAction($userId) {
+        $db = DBcontrollers::getInstance();
+        if (user::isBanned($userId, $db)) {
+                die ("Error: Your account is restricted.");
+        exit();
+    }
+}
 
     public function submit_work(deliveries $deliveries) {
 
