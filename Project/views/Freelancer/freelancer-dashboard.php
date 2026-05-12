@@ -1,5 +1,12 @@
 <?php
 require_once "../../Models/contract.php";
+require_once "../../Models/user.php";
+require_once "../../Controllers/DBcontrollers.php";
+require_once "../../Controllers/post_project.php";
+require_once "../../Controllers/notifycontrollers.php";
+require_once "../../Models/user.php";
+require_once "../../Models/proposal.php";
+require_once "../../Controllers/FreelancerProfileController.php";
 session_start();
 
 if (!isset($_SESSION["userid"])) {
@@ -14,24 +21,31 @@ if ($_SESSION["user_roleid"] != 3) {
     exit();
 }
 
-require_once "../../Controllers/DBcontrollers.php";
-require_once "../../Controllers/post_project.php";
-require_once "../../Controllers/notifycontrollers.php";
-require_once "../../Models/user.php";
-require_once "../../Models/proposal.php";
-require_once "../../Controllers/FreelancerProfileController.php";
+
 
 $db = DBcontrollers::getInstance(); 
+
+if (user::isBanned($_SESSION["userid"], $db)) {
+    echo "<div style='text-align:center; margin-top:100px; font-family:sans-serif;'>
+            <h1 style='color:#ef4444;'>Account Suspended</h1>
+            <p>Your account has been banned by the administrator. You cannot perform any actions.</p>
+            <a href='../Auth/logout.php' style='color:#3b82f6;'>Logout</a>
+          </div>";
+    exit(); 
+}
+
+
+
 $profile_ctrl = new FreelancerProfileController();
 $current_user_id = $_SESSION["userid"];
 
 
-$user_info = $db->Select_query("
-    SELECT u.*, p.verification_status, p.reputation_score, p.show_earnings, p.show_client_names, p.show_contact
-    FROM user u
-    LEFT JOIN freelancer_profiles p ON u.user_id = p.user_id
-    WHERE u.user_id = '$current_user_id'
-");
+// $user_info = $db->Select_query("
+//     SELECT u.*, p.verification_status, p.reputation_score, p.show_earnings, p.show_client_names, p.show_contact
+//     FROM user u
+//     LEFT JOIN freelancer_profiles p ON u.user_id = p.user_id
+//     WHERE u.user_id = '$current_user_id'
+// ");
 $current_user = $user_info[0] ?? null;
 
 $projects = $db->Select_query("SELECT * FROM projects WHERE status = 'Pending' OR status IS NULL");
@@ -94,6 +108,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (empty($profile_exists)) {
         $db->insertquery("INSERT INTO freelancer_profiles (user_id, verification_status) VALUES ('$current_user_id', 'pending')");
     }
+    if (!$profile_ctrl->hasCompletedProfile($current_user_id)) {
+
+    header("Location: ../../views/onboarding/onboarding.php");
+    exit();
+}
 }
 ?>
 
