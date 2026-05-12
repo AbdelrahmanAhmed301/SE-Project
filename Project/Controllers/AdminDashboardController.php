@@ -117,11 +117,7 @@ public function getRecentProposals($limit = 5) {
     return $this->db->Select_query($sql);
 }
 
-public function sanctionUser($userId, $status) {
 
-    $sql = "UPDATE user SET account_status = '$status' WHERE user_id = '$userId'";
-    return $this->db->insertquery($sql);
-}
 
 public function assignArbitrator($disputeId, $adminId) {
     $sql = "UPDATE disputes SET arbitrator_id = '$adminId', status = 'In-Review' WHERE id = '$disputeId'";
@@ -136,5 +132,83 @@ public function executeVerdict($disputeId, $f_percent, $c_percent) {
             WHERE id = '$disputeId'";
     return $this->db->insertquery($sql);
 }
+
+public function sanctionUser($userId, $status) {
+
+    $sql = "UPDATE user SET account_status = '$status' WHERE user_id = '$userId'";
+    $isUpdated = $this->db->insertquery($sql);
+
+    if ($isUpdated) {
+
+        $title = ($status === 'Banned') ? "Account Suspended" : "Account Status Update";
+        $message = "Admin has updated your account status to: " . $status;
+        
+        $this->createSystemNotification($userId, $title, $message);
+    }
+    
+    return $isUpdated;
+}
+
+
+private function createSystemNotification($userId, $title, $msg) {
+    // الحصول على اتصال قاعدة البيانات الحالي
+    $conn = $this->db->get_connection();
+    
+
+    $safe_title = mysqli_real_escape_string($conn, $title);
+    $safe_msg = mysqli_real_escape_string($conn, $msg);
+    
+    $sql = "INSERT INTO notification (user_id, title, msg, create_at) 
+            VALUES ('$userId', '$safe_title', '$safe_msg', NOW())";
+            
+    return $this->db->insertquery($sql);
+}
+
+public function generateWeeklyDigest($userId) {
+    // 1. التأكد أولاً: هل استلم المستخدم إشعار Weekly Digest اليوم؟
+    $checkSql = "SELECT id FROM notification 
+                 WHERE user_id = '$userId' 
+                 AND title = 'Weekly Digest' 
+                 AND DATE(create_at) = CURDATE()";
+    $alreadySent = $this->db->Select_query($checkSql);
+
+    if ($alreadySent) {
+        return false; 
+    }
+
+    $sql = "SELECT title, budget FROM projects WHERE status = 'Pending' ORDER BY budget DESC LIMIT 1";
+    $topProject = $this->db->Select_query($sql);
+
+    if ($topProject) {
+        $pName = $topProject[0]['title'];
+        $budget = (float)$topProject[0]['budget'];
+        $normalizedScore = $budget * 13.37; 
+        
+        $msg = "Special for you: Project " . $pName . " is available with a starting potential of " . $normalizedScore;
+        
+        return $this->createSystemNotification($userId, "Weekly Digest", $msg);
+    }
+
+}
+
+public function get_num_in_progress_projects() {
+
+    $sql = "SELECT count(*) FROM projects WHERE status = 'In Progress'";
+    $result = $this->db->Select_query($sql);
+    if ($result && isset($result[0])) {
+        return array_values($result[0])[0];
+    }
+    return 0;
+}
+
+public function get_num_accepted_proposals() {
+    $sql = "SELECT count(*) FROM proposals WHERE status = 'Accepted'";
+    $result = $this->db->Select_query($sql);
+    if ($result && isset($result[0])) {
+        return array_values($result[0])[0];
+    }
+    return 0;
+}
+
 
 }
