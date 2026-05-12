@@ -31,8 +31,15 @@ if (isset($_GET['delete_freelancer'])) {
 
 if (isset($_GET['ban_user'])) {
     $u_id = $_GET['ban_user'];
-    $admin_controller->sanctionUser($u_id, 'Banned');
+    $admin_controller->sanctionUser($u_id, 'Banned'); 
     header("Location: admin-dashboard.php?action=banned");
+    exit();
+}
+
+if (isset($_GET['activate_user'])) {
+    $u_id = $_GET['activate_user'];
+    $admin_controller->sanctionUser($u_id, 'Active');
+    header("Location: admin-dashboard.php?action=activated");
     exit();
 }
 
@@ -46,12 +53,27 @@ $all_admin      = $user_stats['admin_count'];
 $all_client     = $user_stats['client_count'];
 $all_freelancer = $user_stats['freelancer_count'];
 
+
 $pending_docs = $db->Select_query("
     SELECT d.*, u.username as name 
     FROM freelancer_documents d 
     JOIN user u ON d.freelancer_id = u.user_id 
     WHERE d.status = 'pending'
 ");
+
+$active_projects = $db->Select_query("
+    SELECT 
+        p.project_id, 
+        p.title, 
+        pr.freelancer_id, 
+        u.username as freelancer_name
+    FROM projects p
+    JOIN proposal pr ON p.project_id = pr.project_id
+    JOIN user u ON pr.freelancer_id = u.user_id
+    WHERE pr.status = 'accepted' 
+    AND p.status = 'In Progress'
+");
+
 
 $recent_projects = $admin_controller->getRecentProjects(4);
 
@@ -264,41 +286,57 @@ $recent_proposals = $admin_controller->getRecentProposals(5);
                 </tr>
             </thead>
             <tbody>
-    <?php 
-    if ($all_user):
-        foreach ($all_user as $user): 
-
-            if ($user['role_id'] != 1): ?>
-            <tr>
-                <td>
-                    <div class="user-cell">
-                        <div class="av <?php echo ($user['role_id'] == 3) ? 'av-green' : 'av-blue'; ?>">
-                            <?php echo substr($user['username'], 0, 2); ?>
-                        </div>
-                        <span>
-                            <?php echo htmlspecialchars($user['username']); ?>
-                            <small style="display:block; color:#888; font-size:10px;">
-                                <?php echo ($user['role_id'] == 3) ? 'Freelancer' : 'Client'; ?>
-                            </small>
-                        </span>
+   <?php 
+if ($all_user):
+    foreach ($all_user as $user): 
+        if ($user['role_id'] != 1): ?>
+        <tr>
+            <td>
+                <div class="user-cell">
+                    <div class="av <?php echo ($user['role_id'] == 3) ? 'av-green' : 'av-blue'; ?>">
+                        <?php echo substr($user['username'], 0, 2); ?>
                     </div>
-                </td>
-                <td><?php echo htmlspecialchars($user['email']); ?></td>
-                <td>
-                    <a href="admin-dashboard.php?delete_freelancer=<?php echo $user['user_id']; ?>" 
-                       onclick="return confirm(' are you sure want delete ?');"
-                      style="background: #ef4444; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block;">
-                        delete
-                    </a>
+                    <span>
+                        <?php echo htmlspecialchars($user['username']); ?>
+                        <small style="display:block; color:#888; font-size:10px;">
+                            <?php echo ($user['role_id'] == 3) ? 'Freelancer' : 'Client'; ?>
+                        </small>
+                    </span>
+                </div>
+            </td>
+            <td><?php echo htmlspecialchars($user['email']); ?></td>
+            
+            <td>
+                <span style="padding: 2px 8px; border-radius: 12px; font-size: 11px; background: <?php echo ($user['account_status'] == 'Banned') ? '#fee2e2; color:#ef4444;' : '#dcfce7; color:#16a34a;'; ?>">
+                    <?php echo $user['account_status'] ?? 'Active'; ?>
+                </span>
+            </td>
+
+            <td>
+                <a href="admin-dashboard.php?delete_freelancer=<?php echo $user['user_id']; ?>" 
+                   onclick="return confirm('Are you sure you want to delete?');"
+                   style="background: #ef4444; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block;">
+                    Delete
+                </a>
+
+                <?php if (($user['account_status'] ?? 'Active') == 'Active'): ?>
                     <a href="admin-dashboard.php?ban_user=<?php echo $user['user_id']; ?>" 
-   onclick="return confirm(' BaN ');"
-   style="background: #1f2937; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 12px;">
-   Ban
-</a>
-                </td>
-            </tr>
-        <?php 
-            endif;
+                       onclick="return confirm('Are you sure you want to BAN this user?');"
+                       style="background: #1f2937; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 12px;">
+                       Ban
+                    </a>
+                <?php else: ?>
+                    <a href="admin-dashboard.php?activate_user=<?php echo $user['user_id']; ?>" 
+                       style="background: #10b981; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 12px;">
+                       Activate
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php 
+        endif; 
+    endforeach;
+endif; ?>
         endforeach; 
     endif; ?>
 </tbody>
@@ -356,9 +394,12 @@ $recent_proposals = $admin_controller->getRecentProposals(5);
     <div class="card-header">
         <div class="card-title">Pending Document Verifications</div>
     </div>
+
     <div style="padding: 20px;">
+
         <?php if (!empty($pending_docs)): ?>
             <table style="width: 100%; border-collapse: collapse;">
+                
                 <thead>
                     <tr style="background: #f4f4f4; text-align: left;">
                         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Freelancer</th>
@@ -367,26 +408,91 @@ $recent_proposals = $admin_controller->getRecentProposals(5);
                         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Action</th>
                     </tr>
                 </thead>
+
                 <tbody>
+
                     <?php foreach ($pending_docs as $doc): ?>
                         <tr>
-                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo htmlspecialchars($doc['name']); ?></td>
-                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><?php echo htmlspecialchars($doc['document_type']); ?></td>
-                            <td style="padding: 10px; border-bottom: 1px solid #eee;">
-                                <a href="<?php echo htmlspecialchars($doc['document_path']); ?>" target="_blank" style="color: #4f8ef7; text-decoration: none;">View File</a>
+
+                            <!-- اسم الفريلانسر -->
+                            <td>
+                                <strong><?php echo htmlspecialchars($doc['name']); ?></strong>
                             </td>
-                            <td style="padding: 10px; border-bottom: 1px solid #eee;">
-                                <a href="admin-dashboard.php?approve_doc=<?php echo $doc['document_id']; ?>&f_id=<?php echo $doc['freelancer_id']; ?>" 
-                                   style="background: #22c87a; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 12px;">
-                                   Approve
+
+                            <!-- نوع الوثيقة -->
+                            <td>
+                                <?php echo htmlspecialchars($doc['document_type'] ?? 'N/A'); ?>
+                            </td>
+
+                            <td>
+                                <a href="<?php echo htmlspecialchars($doc['file_path']); ?>" target="_blank">
+                                    View Document
                                 </a>
                             </td>
+
+                            <td>
+                                <a href="admin-dashboard.php?approve_doc=<?php echo $doc['document_id']; ?>&f_id=<?php echo $doc['freelancer_id']; ?>"
+                                   style="background:#22c55e;color:white;padding:6px 10px;border-radius:5px;text-decoration:none;">
+                                    Approve
+                                </a>
+
+
+                            </td>
+
                         </tr>
                     <?php endforeach; ?>
+
+                </tbody>
+            </table>
+
+        <?php else: ?>
+            <p style="color:#666;text-align:center;">No pending documents to review.</p>
+        <?php endif; ?>
+
+    </div>
+</section>
+
+<section class="card" style="margin-top: 20px;">
+    <div class="card-head">
+        <h2 class="card-title">Active Contracts & Rating</h2>
+    </div>
+    <div style="padding: 20px;">
+        <?php if (!empty($active_contracts)): ?>
+            <table class="mini-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Freelancer</th>
+                        <th>Set Rating & Complete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($active_projects as $proj): ?>
+    <tr>
+        <td><?php echo htmlspecialchars($proj['title']); ?></td>
+        <td><?php echo htmlspecialchars($proj['freelancer_name']); ?></td>
+        <td>
+            <form action="process_rating.php" method="POST">
+                <input type="hidden" name="project_id" value="<?php echo $proj['project_id']; ?>">
+                <input type="hidden" name="freelancer_id" value="<?php echo $proj['freelancer_id']; ?>">
+                
+                <select name="rating" required>
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
+                </select>
+                
+                <button type="submit" name="complete_project">Complete Project</button>
+            </form>
+        </td>
+    </tr>
+<?php endforeach; ?>
                 </tbody>
             </table>
         <?php else: ?>
-            <p style="color: #666; text-align: center;">No pending documents to review.</p>
+            <p style="color: #666; text-align: center;">No active contracts to rate.</p>
         <?php endif; ?>
     </div>
 </section>
