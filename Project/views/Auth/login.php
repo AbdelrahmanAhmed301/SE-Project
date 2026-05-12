@@ -1,46 +1,68 @@
 <?php
+
 session_start();
 
 require_once "../../Models/user.php";
-
 require_once "../../Controllers/authcontroller.php";
+require_once "../../Controllers/FreelancerProfileController.php";
+require_once "../../Controllers/DBcontrollers.php";
 
-$err_msg="";
+$err_msg = "";
 
-if(isset($_POST['email']) && isset($_POST['password'])){
-    if(!empty($_POST['email']) && !empty($_POST['password'])){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email    = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    if (!empty($email) && !empty($password)) {
 
-        $user = new user();
-        $auth = new authcontrollers();
+        $db = DBcontrollers::getInstance();
+        $result = $db->Select_query("
+            SELECT *
+            FROM user
+            WHERE email = '$email'
+            LIMIT 1
+        ");
 
-        $user->email = $_POST['email'];
-        $user->password_hash = $_POST['password'];
+        if (!empty($result)) {
 
-        if(!$auth->login($user)){
-            $err_msg = $_SESSION["errmsg"];
-        } else {
+            $user_data = $result[0];
 
-            if($_SESSION['user_roleid']==1){
-                header("Location: ../../views/Admin/admin-dashboard.php");
-                exit();
-            }
-            elseif($_SESSION['user_roleid']==2){
-                header("Location: ../../views/Client/client-dashboard.php");
-                exit();
-            }
-            else{
-              
-                header("Location: ../../views/Freelancer/freelancer-dashboard.php");
-                exit();
-            }
-        }
-
+           if (password_verify($password, $user_data['password_hash'])) {
+    
+    // فحص حالة الحساب قبل السماح بالدخول
+    // إذا كان العمود غير موجود أو قيمته Banned سيتم منعه
+    if (isset($user_data['account_status']) && $user_data['account_status'] === 'Banned') {
+        $err_msg = "Your account has been suspended by the administrator.";
     } else {
-        $err_msg = "Please fill in all fields.";
+        session_regenerate_id(true);
+
+        $_SESSION['userid']      = $user_data['user_id'];
+        $_SESSION['username']    = $user_data['username'];
+        $_SESSION['user_roleid'] = $user_data['role_id'];
+
+        // توجيه المستخدم حسب دوره
+        if ($user_data['role_id'] == 1) {
+            header("Location: ../../views/Admin/admin-dashboard.php");
+            exit();
+        } elseif ($user_data['role_id'] == 2) {
+            header("Location: ../../views/Client/client-dashboard.php");
+            exit();
+        } elseif ($user_data['role_id'] == 3) {
+            header("Location: ../../views/Freelancer/freelancer-dashboard.php");
+            exit();
+        }
+    }
+} else {
+    $err_msg = "Incorrect password";
+}
+        } else {
+            $err_msg = "Email does not exist";
+        }
+    } else {
+        $err_msg = "Please fill in all fields";
     }
 }
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
