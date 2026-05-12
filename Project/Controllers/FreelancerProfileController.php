@@ -2,10 +2,7 @@
 
 require_once __DIR__ . "/DBcontrollers.php";
 
-/**
- * FreelancerProfileController
- * Handles Section A functions for the Freelance Gig Platform
- */
+
 class FreelancerProfileController {
 
     private $db;
@@ -25,13 +22,12 @@ class FreelancerProfileController {
         $document_type  = $this->db->connection->real_escape_string($document_type);
         $document_path  = $this->db->connection->real_escape_string($document_path);
 
-        // 1. تسجيل المستند في جدول المستندات
         $insertDoc = $this->db->insertquery(
             "INSERT INTO freelancer_documents (freelancer_id, document_type, document_path, status, uploaded_at)
              VALUES ('$freelancer_id', '$document_type', '$document_path', 'pending', NOW())"
         );
 
-        // 2. تحديث حالة البروفايل في الجدول الجديد
+  
         if ($insertDoc) {
             $this->db->insertquery(
                 "UPDATE freelancer_profiles 
@@ -43,9 +39,7 @@ class FreelancerProfileController {
         return $insertDoc;
     }
 
-    /**
-     * Admin action to approve or reject a document.
-     */
+   
     public function adminReviewDocument($document_id, $freelancer_id, $status, $note = '') {
         $document_id   = $this->db->connection->real_escape_string($document_id);
         $freelancer_id = $this->db->connection->real_escape_string($freelancer_id);
@@ -53,7 +47,6 @@ class FreelancerProfileController {
         $note          = $this->db->connection->real_escape_string($note);
         $admin_id      = $_SESSION['userid'] ?? 0;
 
-        // تحديث جدول المستندات
         $updateDoc = $this->db->insertquery("
             UPDATE freelancer_documents 
             SET status = '$status', 
@@ -63,7 +56,6 @@ class FreelancerProfileController {
             WHERE document_id = '$document_id'
         ");
 
-        // إذا تمت الموافقة، نحدث الحالة في جدول البروفايل الجديد
         if ($updateDoc && $status === 'approved') {
             return $this->db->insertquery("
                 UPDATE freelancer_profiles 
@@ -75,13 +67,9 @@ class FreelancerProfileController {
         return $updateDoc;
     }
 
-    /**
-     * Get verification status and documents for a freelancer
-     */
     public function getVerificationStatus($freelancer_id) {
         $freelancer_id = $this->db->connection->real_escape_string($freelancer_id);
-        
-        // جلب الحالة من الجدول الجديد freelancer_profiles
+
         $res = $this->db->Select_query("SELECT verification_status FROM freelancer_profiles WHERE user_id = '$freelancer_id'");
         $status = !empty($res) ? $res[0]['verification_status'] : 'pending';
         
@@ -90,13 +78,6 @@ class FreelancerProfileController {
         return ['status' => $status, 'documents' => $docs];
     }
 
-    // ══════════════════════════════════════════════════════════════
-    // FUNCTION 2 — Privacy Settings
-    // ══════════════════════════════════════════════════════════════
-
-    /**
-     * Update profile privacy visibility settings
-     */
     public function updatePrivacySettings($freelancer_id, $show_earnings, $show_clients, $show_contact) {
         $freelancer_id = $this->db->connection->real_escape_string($freelancer_id);
         
@@ -109,13 +90,9 @@ class FreelancerProfileController {
         ");
     }
 
-    /**
-     * Get public profile data with privacy filters applied
-     */
     public function getPublicProfile($freelancer_id, $viewer_id = null) {
         $freelancer_id = $this->db->connection->real_escape_string($freelancer_id);
-        
-        // جلب البيانات بدمج جدول اليوزر مع جدول البروفايل الجديد
+
         $data = $this->db->Select_query("
             SELECT u.name, u.email, p.* FROM user u 
             JOIN freelancer_profiles p ON u.user_id = p.user_id 
