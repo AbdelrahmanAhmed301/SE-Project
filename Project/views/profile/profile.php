@@ -26,6 +26,14 @@ $skills_query = "SELECT skill_name, bio FROM freelancer_skills WHERE freelancer_
 $my_skills = $db->Select_query($skills_query) ?? []; 
 
 $display_bio = !empty($my_skills) ? $my_skills[0]['bio'] : "No bio available.";
+
+$query = "SELECT u.username, p.verification_status, p.rating_avg, p.total_reviews 
+        FROM user u 
+        LEFT JOIN freelancer_profiles p ON u.user_id = p.user_id 
+        WHERE u.user_id = '$user_id'";
+
+$user_data = $db->Select_query($query);
+$freelancer = $user_data[0];
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +80,10 @@ $display_bio = !empty($my_skills) ? $my_skills[0]['bio'] : "No bio available.";
                 <?php endif; ?>
             </div>
         </div>
+        <div class="rating-display">
+    <span class="stars">⭐ <?php echo number_format($freelancer['rating_avg'], 1); ?></span>
+    <span class="reviews-count">(<?php echo $freelancer['total_reviews']; ?> reviews)</span>
+</div>
     </div>
 </div>
 
