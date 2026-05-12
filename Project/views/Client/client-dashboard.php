@@ -30,11 +30,23 @@ if ($_SESSION["user_roleid"] != 2) {
 $db = DBcontrollers::getInstance(); 
 
 
+require_once "../../Models/user.php";
+if (user::isBanned($_SESSION["userid"], $db)) {
+    echo "<div style='text-align:center; margin-top:100px; font-family:sans-serif;'>
+            <h1 style='color:#ef4444;'>Account Suspended</h1>
+            <p>Your account has been banned by the administrator. You cannot perform any actions.</p>
+            <a href='../Auth/logout.php' style='color:#3b82f6;'>Logout</a>
+        </div>";
+    exit(); 
+}
+
+
 $current_user_id = $_SESSION["userid"]; 
 $notifications = $db->Select_query("SELECT * FROM notification WHERE user_id = '$current_user_id'");
 
 $user_data = $db->Select_query("SELECT * FROM user WHERE user_id = '$current_user_id'");
 $current_user = $user_data[0] ?? null;
+// 
 
 $my_own_projects = $db->Select_query("SELECT * FROM projects WHERE client_id = '$current_user_id'");
 $contracts = $db->Select_query("
@@ -56,8 +68,9 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkNest — Client Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/Project/public/assets/css/client-dashboard.css">
-    <link rel="stylesheet" href="../../public/assets/css/home.css">
+    <!-- <link rel="stylesheet" href="/Project/public/assets/css/client-dashboard.css"> -->
+    <link rel="stylesheet" href="../../public/assets/css/client-dashboard.css">
+    <!-- <link rel="stylesheet" href="../../public/assets/css/home.css"> -->
 </head>
 <body>
 
@@ -70,12 +83,12 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
 
     <div class="nav-section">
         <div class="nav-label">Main Menu</div>
-        <div class="nav-item active" onclick="navigate('dashboard', this)">
-            <div class="icon">⬡</div> Dashboard
-        </div>
-        <div class="nav-item" onclick="navigate('projects', this)">
-            <div class="icon">◈</div> My Projects
-        </div>
+       <div class="nav-item active" onclick="showSection('dashboard', this)">
+    <div class="icon">⬡</div> Dashboard
+</div>
+        <div class="nav-item" onclick="showSection('projects', this)">
+    <div class="icon">◈</div> My Projects
+</div>
             <div class="nav-item">
         <a href="../../views/projects/project_details.php" style="text-decoration:none; color:inherit;">
             <div class="icon"></div>  + Post a Project
@@ -213,7 +226,7 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         </section>
 
         <!-- Post Project Section (Inline version) -->
-        <section class="section" id="section-post-project">
+        <section class="section" id="section-projects">
             <div class="card">
                 <div class="card-header"><div class="card-title"><a href="../../views/projects/project_details.php">+ post New Project</a></div></div>
                 <div style="padding:24px">
@@ -222,27 +235,58 @@ $total_spent = $post_controller->get_total_spent($current_user_id);
         </section>
     </div>
 </main>
-<!-- <div class="overlay" id="notification-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title">Notifications</div>
-      <button class="modal-close" onclick="close_modal('notification-modal')">×</button>
+
+     <div class="overlay" id="notification-modal">
+
+    <div class="modal">
+
+        <div class="modal-head">
+            <div class="modal-title">Notifications</div>
+
+            <button class="modal-close"
+                onclick="close_modal('notification-modal')">
+                ×
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <?php if (!empty($notifications)): ?>
+
+                <?php foreach ($notifications as $notif): ?>
+
+                    <div class="notification-item">
+
+                        <strong>
+                            <?php echo htmlspecialchars($notif['title']); ?>
+                        </strong>
+
+                        <p>
+                            <?php echo htmlspecialchars($notif['msg']); ?>
+                        </p>
+
+                        <small>
+                            <?php echo $notif['create_at']; ?>
+                        </small>
+
+                    </div>
+
+                <?php endforeach; ?>
+
+            <?php else: ?>
+
+                <p>No new notifications.</p>
+
+            <?php endif; ?>
+
+        </div>
+
     </div>
-    <div class="modal-body">
-      <?php if (!empty($notifications)): ?>
-        <?php foreach ($notifications as $notif): ?>
-          <div style="padding: 10px; border-bottom: 1px solid #eee;">
-            <strong><?php echo htmlspecialchars($notif['title']); ?></strong>
-            <p style="font-size: 12px; color: #666;"><?php echo htmlspecialchars($notif['msg']); ?></p>
-            <small><?php echo $notif['create_at']; ?></small>
-          </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>No new notifications.</p>
-    <?php endif; ?>
+
+</div>
 
 
 
-<script src="/Project/public/assets/js/client-dashboard.js"></script>
+<script src="../../public/assets/js/client-dashboard.js"></script>
 </body>
 </html>
