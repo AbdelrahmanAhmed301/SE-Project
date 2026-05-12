@@ -30,8 +30,8 @@
             <h1>Connect with Specialized Professionals</h1>
             <p>Find expert freelancers in Data Science, Legal Consulting, Translation, and more</p>
             <div class="cta-buttons">
-                <a href="client.html" class="btn btn-primary">Hire Specialists</a>
-                <a href="freelancer.html" class="btn btn-secondary">Find Work</a>
+                <a href="../../views/Client/client-dashboard.php" class="btn btn-primary">Hire Specialists</a>
+                <a href="../../views/Freelancer/freelancer-dashboard.php" class="btn btn-secondary">Find Work</a>
             </div>
         </div>
     </section>
@@ -52,7 +52,7 @@
                     </div>
                     <h3>I'm a Client</h3>
                     <p>Post projects and hire specialized professionals for your business needs</p>
-                    <a href="client.html" class="card-link">Get Started →</a>
+                    <a href="../../views/Client/client-dashboard.php" class="card-link">Get Started →</a>
                 </div>
 
                 <div class="card">
