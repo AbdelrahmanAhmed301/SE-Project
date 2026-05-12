@@ -7,6 +7,13 @@ class post_project{
     public function __construct() {
         $this->db = DBcontrollers::getInstance();
     }
+    public function someAction($userId) {
+        $db = DBcontrollers::getInstance();
+        if (user::isBanned($userId, $db)) {
+                die ("Error: Your account is restricted.");
+        exit();
+    }
+}
 
     public function post_project(project $project){
         if($this->db = DBcontrollers::getInstance()){
