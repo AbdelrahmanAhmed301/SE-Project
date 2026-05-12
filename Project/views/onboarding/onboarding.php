@@ -16,16 +16,14 @@ $user_id = $_SESSION['userid'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio = $db->connection->real_escape_string($_POST['bio']);
 
-    // 1. تحديث أو إنشاء البروفايل (الـ Bio مكانه هنا في جدول freelancer_profiles)
     $db->insertquery("
         INSERT INTO freelancer_profiles (user_id, bio, verification_status)
         VALUES ('$user_id', '$bio', 'pending')
         ON DUPLICATE KEY UPDATE bio = '$bio'
     ");
 
-    // 2. تحديث المهارات في جدول freelancer_skills
     if (!empty($_POST['skills'])) {
-        // حذف المهارات القديمة لتجنب التكرار
+
         $db->insertquery("DELETE FROM freelancer_skills WHERE freelancer_id = '$user_id'");
 
         foreach ($_POST['skills'] as $skill_id) {
@@ -34,9 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if(!empty($skill_data)) {
                 $skill_name = $skill_data[0]['skill_name'];
-                // تأكد أن جدول freelancer_skills يحتوي على الأعمدة freelancer_id, skill_id, skill_name
-                $db->insertquery("INSERT INTO freelancer_skills (freelancer_id, skill_id, skill_name) 
-                                 VALUES ('$user_id', '$skill_id', '$skill_name')");
+
+                $db->insertquery("INSERT INTO freelancer_skills (freelancer_id, skill_name) 
+                                 VALUES ('$user_id', '$skill_name')");
             }
         }
     }
