@@ -72,7 +72,7 @@ public function deleteUser($user_id) {
     return $this->db->insertquery($sql); 
 }
 
-// Add this method inside AdminDashboardController class
+
 public function getRecentProjects($limit = 5) {
     $sql = "SELECT p.*, u.username as client_name 
             FROM projects p 
@@ -151,7 +151,7 @@ public function sanctionUser($userId, $status) {
 
 
 private function createSystemNotification($userId, $title, $msg) {
-    // الحصول على اتصال قاعدة البيانات الحالي
+
     $conn = $this->db->get_connection();
     
 
